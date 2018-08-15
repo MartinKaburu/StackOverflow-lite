@@ -24,10 +24,11 @@ errors:
 
 from datetime import datetime as dt
 
-from flask import jsonify, Blueprint, abort, request
+from flask import jsonify, Blueprint, abort, request, url_for
 
-from app.resources.questions import QUESTIONS
+# from app.resources.questions import QUESTIONS
 
+QUESTIONS = []
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -49,28 +50,47 @@ def get_question(question_id):
     return jsonify({'question': question[0]}), 200
 
 
-@BP.route('/question', methods=['POST'])
+@BP.route('/post_question', methods=['POST'])
 def add_question():
     ''' add a question
     '''
     if request.json and request.json['owner'] and request.json['content']:
-        question = {
-            'id': QUESTIONS[-1]['id']+1,
-            'owner': request.json['owner'],
-            'content': request.json['content'],
-            'answers': [
-                {
-                    'upvotes': 0,
-                    'downvotes': 0,
-                    'accepted': False,
-                    'answer_content': '',
-                    'answer_owner': '',
-                    'date_answered': dt.utcnow()
-                }
-            ],
-            'date_asked': dt.utcnow(),
-            'answered': False
-        }
+        try:
+            question = {
+                'id': QUESTIONS[-1]['id']+1,
+                'owner': request.json['owner'],
+                'content': request.json['content'],
+                'answers': [
+                    {
+                        'upvotes': 0,
+                        'downvotes': 0,
+                        'accepted': False,
+                        'answer_content': '',
+                        'answer_owner': '',
+                        'date_answered': dt.utcnow()
+                    }
+                ],
+                'date_asked': dt.utcnow(),
+                'answered': False
+            }
+        except IndexError:
+            question = {
+                'id': 1,
+                'owner': request.json['owner'],
+                'content': request.json['content'],
+                'answers': [
+                    {
+                        'upvotes': 0,
+                        'downvotes': 0,
+                        'accepted': False,
+                        'answer_content': '',
+                        'answer_owner': '',
+                        'date_answered': dt.utcnow()
+                    }
+                ],
+                'date_asked': dt.utcnow(),
+                'answered': False
+            }
         QUESTIONS.append(question)
         return jsonify({'question': question}), 201
 
