@@ -1,9 +1,9 @@
 '''api endpoints:
-    /api/v1/get_all
+    /api/v1/questions
         methods=['GET']
         returns json data of all the questions
         status_code 200
-    /api/v1/get_question/<int:question_id>
+    /api/v1/get_questions/<int:question_id>
         methods=['GET']
         returns json data on the question specified
         status_code 200
@@ -11,7 +11,7 @@
         methods=['POST']
         returns json data on the added question
         status_code 201
-    /api/v1/post_answer/<int:question_id>
+    /api/v1/questions/<int:question_id>/answers
         methods=['POST']
         returns json data on the question answered
         status_code 201

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-'''define questions as:
+'''define question as:
 
  question = {
     id: Integer {URI},
@@ -19,6 +19,9 @@
     date_asked: DateTime {Date asked},
     answered: Boolean {True if any of the answers has been accepted}
  }
+
+QUESTIONS is a constant list of dictionaries
+
 '''
 
 from datetime import datetime as dt
@@ -55,7 +58,7 @@ QUESTIONS = [
             },
         ],
         'date_asked': dt.utcnow(),
-        'answered': True  # [answer for answer in question['answers'] if answer['accepted'] is True]
+        'answered': True  # Bug [answer for answer in question['answers'] if answer['accepted'] is True]
     },
     {
         'id': 2,
