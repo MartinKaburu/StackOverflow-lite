@@ -352,7 +352,7 @@ body{
   padding-bottom: 10px;
 }
 .nav_bar ul{
-  margin-left: 70%;
+  margin-left: 65%;
 }
 .nav_bar li{
   float:left;
@@ -371,7 +371,7 @@ body{
   border: none;
 }
 .nav_bar a:hover{
-box-shadow: 0px 0px 10px #ccc
+  color: #000;
 }
 
 .nav_bar input{
@@ -379,12 +379,9 @@ box-shadow: 0px 0px 10px #ccc
   color: #ded9df;
   padding: 5px;
   border-color: transparent transparent #ded9df transparent;
-  margin-top: -6%;
+  margin-top: -8%;
 }
 
-.nav_bar input:active {
-    border-color: transparent transparent #ccc transparent;
-}
 .nav_bar ul{
   font-family: Arial, Helvetica;
   padding: 8px 0 0 0;
@@ -422,6 +419,7 @@ box-shadow: 0px 0px 10px #ccc
 
 .feed .side_bar a:hover{
   background-color: #ded9df;
+  color: #000;
 }
 
 .feed .q_and_a{
@@ -469,13 +467,19 @@ box-shadow: 0px 0px 10px #ccc
   margin-left: -8%;
 }
 
+.feed button:hover{
+  color: #000;
+  background-color: #fff;
+  border: 2px solid #207cca;
+}
+
 .feed  hr{
   margin-left: 3%;
   color: #0085a1;
 }
 .feed .q_and_a .my_answer textarea{
   margin: 0px 5px 5px 5px;
-  width: 70%;
+  width: 85%;
   height: 5%;
   background-color: #fef;
   color: #000;
@@ -501,7 +505,11 @@ box-shadow: 0px 0px 10px #ccc
   border: none;
   margin-left: 63%;
 }
-
+.feed .ask_question button:hover{
+  color: #000;
+  background-color: #fff;
+  border: 2px solid #207cca;
+}
 .feed h1{
   color: #0085a1;
   text-align: left;
@@ -533,6 +541,28 @@ box-shadow: 0px 0px 10px #ccc
   z-index: 1;
   top: 5%;
   left: .5%;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+.container{
+  margin-left: 40%;
+}
+.container li{
+  color: #0085a1;
+  margin-left: 8%;
+}
+
+.fa-circle{
+  color: black;
+}
+
+.profile{
+  height: 43%;
+  width: 20%;
+  position: fixed;
+  z-index: 1;
+  top: 2%;
+  right: .5%;
   overflow-x: hidden;
   padding-top: 20px;
 }

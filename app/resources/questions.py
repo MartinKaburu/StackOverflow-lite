@@ -58,7 +58,7 @@ QUESTIONS = [
             },
         ],
         'date_asked': dt.utcnow(),
-        'answered': True  # Bug [answer for answer in question['answers'] if answer['accepted'] is True]
+        'answered': True  # [answer for answer in question['answers'] if answer['accepted'] is True]
     },
     {
         'id': 2,
