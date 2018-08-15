@@ -24,7 +24,7 @@ errors:
 
 from datetime import datetime as dt
 
-from flask import jsonify, Blueprint, abort, request, url_for
+from flask import jsonify, Blueprint, abort, request
 
 # from app.resources.questions import QUESTIONS
 
