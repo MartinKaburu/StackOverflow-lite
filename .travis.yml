@@ -16,12 +16,9 @@ install:
 script:
         - coverage erase
         - coverage run --source=app -m app.tests.test_questions && coverage html
+        - pylint --output-format=text app
      
 
 after_success:
-        - codecov
-
-
-script:
-        - pylint --output-format=text app
         - codecov --token=e491af6c-4d42-41d6-a693-7c96f4dd5d67
+
