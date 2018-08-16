@@ -3,6 +3,9 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[requires]
+python_version = "2.7"
+
 [dev-packages]
 
 [packages]
@@ -59,5 +62,3 @@ Pygments = "==2.2.0"
 Sphinx = "==1.7.6"
 "backports.functools_lru_cache" = "==1.5"
 
-[requires]
-python_version = "2.7"
