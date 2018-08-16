@@ -15,21 +15,21 @@ https://stacksverflow-lite.herokuapp.com
 To get started visit:
         https://stacksverflow-lite.herokuapp.com
 
-api endpoints:
+# api endpoints:
 
-# Get all questions  
+->Get all questions  
 https://stacksverflow-lite.herokuapp.com/api/v1/questions
 methods=['GET']
 returns json data of all the questions
 status_code 200
 
-# Get specific question
+->Get specific question
 https://stacksverflow-lite.herokuapp.com/api/v1/questions/<int:question_id>
 methods=['GET']
 returns json data on the question specified
 status_code 200
 
-# Add a question
+->Add a question \n
 https://stacksverflow-lite.herokuapp.com/api/v1/post_question
 methods=['POST']
 headers['Content_Type':'application/json']
@@ -39,7 +39,7 @@ returns json data on the added question status_code 201
 or 
 returns 400 incase 'content' or 'owner' keys were not specified
 
-# Answer a question
+->Answer a question
 https://stacksverflow-lite.herokuapp.com/api/v1/questions/<int:question_id>/answers
 methods=['POST']
 headers['Content_Type':'application/json']
@@ -49,7 +49,7 @@ returns json data on the answered question status_code 201
 or 
 returns 400 incase 'answer_content' or 'answer_owner' keys were not specified
 
-errors:
+# errors:
     400 bad request
     404 resource not found
     201 created
