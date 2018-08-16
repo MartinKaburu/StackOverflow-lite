@@ -59,7 +59,7 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(all_questions.status_code, 200)
         self.assertEqual('application/json', all_questions.content_type)
         self.assertIn("How to create an api?", all_questions.data)
-        self.assertIn(str(5), str(all_questions.data))
+        self.assertIn(str(4), str(all_questions.data))
 
     def test_get_specific_question(self):
         """Test the api to return specific question as per the question id"""
