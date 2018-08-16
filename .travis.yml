@@ -21,3 +21,4 @@ after_success:
 
 script:
         - pylint --output-format=text app
+        - codecov --token=e491af6c-4d42-41d6-a693-7c96f4dd5d67
