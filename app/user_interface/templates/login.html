@@ -7,7 +7,7 @@
 
 <div class="my-page">
   <div class="left">
-    <form action="/" method="post" class="form signup animated bounceInLeft">
+    <form action="{{url_for('home') }}" method="get" class="form signup animated bounceInLeft">
         <h1>Sign Up</h1>
         <hr>
         <div class="field-wrap">
@@ -40,7 +40,7 @@
     </form>
   </div>
   <div class="right">
-    <form action="/" method="post" class="form login animated bounceInRight">
+    <form action="{{url_for('home') }}" method="get" class="form login animated bounceInRight">
         <h1>Log In</h1>
         <hr>
         <div class="field-wrap">

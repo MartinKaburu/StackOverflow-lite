@@ -548,16 +548,9 @@ body{
   margin-left: 40%;
 }
 .container li{
-  color: #0085a1;
   margin-left: 8%;
 }
-
-.fa-circle{
-  color: black;
-}
-
 .profile{
-  height: 43%;
   width: 20%;
   position: fixed;
   z-index: 1;

@@ -13,10 +13,10 @@
     <nav class="nav_bar">
       <ul>
         <li><a href="#">Home</a> </li>
-        <li><a href="profile.html">Profile</a> </li>
-        <li><a href="login.html">Get Started</a> </li>
+        <li><a href="{{ url_for('profile') }}">Profile</a> </li>
+        <li><a href="{{url_for('login') }}">Log out</a> </li>
         <li>
-          <form class="search_form" action="index.html" method="post">
+          <form class="search_form" action="{{ url_for('home') }}" method="get">
             <input type="text" name="search" placeholder="search...">
           </form>
         </li>

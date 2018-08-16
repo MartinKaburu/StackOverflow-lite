@@ -17,3 +17,9 @@ def home():
     ''' route to render hom page
     '''
     return render_template('index.html')
+
+@APP.route('/profile')
+def profile():
+    ''' route to render hom page
+    '''
+    return render_template('profile.html')
