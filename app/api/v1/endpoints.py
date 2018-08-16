@@ -60,16 +60,7 @@ def add_question():
                 'id': QUESTIONS[-1]['id']+1,
                 'owner': request.json['owner'],
                 'content': request.json['content'],
-                'answers': [
-                    {
-                        'upvotes': 0,
-                        'downvotes': 0,
-                        'accepted': False,
-                        'answer_content': '',
-                        'answer_owner': '',
-                        'date_answered': dt.utcnow()
-                    }
-                ],
+                'answers': [],
                 'date_asked': dt.utcnow(),
                 'answered': False
             }
@@ -78,23 +69,14 @@ def add_question():
                 'id': 1,
                 'owner': request.json['owner'],
                 'content': request.json['content'],
-                'answers': [
-                    {
-                        'upvotes': 0,
-                        'downvotes': 0,
-                        'accepted': False,
-                        'answer_content': '',
-                        'answer_owner': '',
-                        'date_answered': dt.utcnow()
-                    }
-                ],
+                'answers': [],
                 'date_asked': dt.utcnow(),
                 'answered': False
             }
         QUESTIONS.append(question)
         return jsonify({'question': question}), 201
 
-    return abort(400), 404
+    return abort(400), 400
 
 
 @BP.route('/questions/<int:question_id>/answers', methods=['POST'])
@@ -115,4 +97,4 @@ def answer_question(question_id):
         }
         question[0]['answers'].append(answer)
         return jsonify({"question": question}), 201
-    return abort(400), 404
+    return abort(400), 400
