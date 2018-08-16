@@ -2,11 +2,9 @@ language: python
 
 python:
         -  2.7
-        -  3.6
 
 env:
-        - FLASK_APP=app
-        - FLASK_ENV=development
+        - FLASK_APP=app FLASK_ENV=development
 
 install:
         - pip install -r requirements.txt
