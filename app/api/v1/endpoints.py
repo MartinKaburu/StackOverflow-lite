@@ -46,7 +46,7 @@ def get_question(question_id):
     '''
     question = [question for question in QUESTIONS if question['id'] == question_id]
     if not question:
-        abort(404)
+        return abort(404), 404
     return jsonify({'question': question[0]}), 200
 
 
@@ -94,7 +94,7 @@ def add_question():
         QUESTIONS.append(question)
         return jsonify({'question': question}), 201
 
-    abort(400)
+    return abort(400), 404
 
 
 @BP.route('/questions/<int:question_id>/answers', methods=['POST'])
@@ -103,18 +103,16 @@ def answer_question(question_id):
     '''
     question = [question for question in QUESTIONS if question['id'] == question_id]
     if not question:
-        abort(404)
-    else:
-        if request.json and request.json['answer_content'] and request.json['answer_owner']:
-            answer = {
-                "answer_owner": request.json['answer_owner'],
-                "answer_content": request.json['answer_content'],
-                "accepted": False,
-                "upvotes": 0,
-                "downvotes": 0,
-                "date_answered": dt.utcnow()
-            }
-            question[0]['answers'].append(answer)
-            return jsonify({"question": question}), 201
-        else:
-            abort(400)
+        return abort(404), 404
+    if request.json and request.json['answer_content'] and request.json['answer_owner']:
+        answer = {
+            "answer_owner": request.json['answer_owner'],
+            "answer_content": request.json['answer_content'],
+            "accepted": False,
+            "upvotes": 0,
+            "downvotes": 0,
+            "date_answered": dt.utcnow()
+        }
+        question[0]['answers'].append(answer)
+        return jsonify({"question": question}), 201
+    return abort(400), 404

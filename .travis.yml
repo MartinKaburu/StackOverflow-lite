@@ -16,7 +16,7 @@ install:
 script:
         - coverage erase
         - coverage run --source=app -m app.tests.test_questions && coverage html
-        - pylint --output-format=text app
+        - pylint --output-format=text --disable=wrong-import-position,unused-import app
      
 
 after_success:
