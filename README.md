@@ -8,17 +8,17 @@ https://martinkaburu.github.io/StackOverflow-lite/index.html
 
 # heroku hosting
 
-https://stacksverflow-lite.herokuapp.com
+https://kaburu-stackoverflow-lite.herokuapp.com
 
 # USAGE:
 
 To get started visit:
-        https://stacksverflow-lite.herokuapp.com
+        https://kaburu-stackoverflow-lite.herokuapp.com
 
 # api endpoints:
 
 ->Get all questions  
-https://stacksverflow-lite.herokuapp.com/api/v1/questions
+https://kaburu-stackoverflow-lite.herokuapp.com/api/v1/questions
 
 methods=['GET']
 
@@ -28,7 +28,7 @@ status_code 200
 
 ->Get specific question
 
-https://stacksverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}
+https://kaburu-stackoverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}
 
 methods=['GET']
 
@@ -38,7 +38,7 @@ status_code 200
 
 ->Add a question \n
 
-https://stacksverflow-lite.herokuapp.com/api/v1/post_question
+https://kaburu-stackoverflow-lite.herokuapp.com/api/v1/post_question
 
 methods=['POST']
 
@@ -54,7 +54,7 @@ returns 400 incase 'content' or 'owner' keys were not specified in the json or t
 
 ->Answer a question
 
-https://stacksverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}/answers
+https://kaburu-stackoverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}/answers
 
 methods=['POST']
 

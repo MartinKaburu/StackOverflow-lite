@@ -21,6 +21,6 @@ after_success:
         - codecov --token=e491af6c-4d42-41d6-a693-7c96f4dd5d67
 
 deploy:
-        provider: heroku
-        api_key:
-           secure: "c306e7a9-ddb3-4357-8452-de63bb18a5d9"
+  provider: heroku
+  api_key: "70359390-7474-4d89-a237-940e8a9aead8"
+  app: kaburu-stackoverflow-lite
