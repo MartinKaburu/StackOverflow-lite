@@ -28,7 +28,7 @@ status_code 200
 
 ->Get specific question
 
-https://stacksverflow-lite.herokuapp.com/api/v1/questions/int:question_id
+https://stacksverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}
 
 methods=['GET']
 
@@ -54,7 +54,7 @@ returns 400 incase 'content' or 'owner' keys were not specified
 
 ->Answer a question
 
-https://stacksverflow-lite.herokuapp.com/api/v1/questions/int:question_id/answers
+https://stacksverflow-lite.herokuapp.com/api/v1/questions/{int:question_id}/answers
 
 methods=['POST']
 
