@@ -29,4 +29,4 @@ def bad_request(error):
 def bad_request(error):
     '''error handler for Bad request
     '''
-    return make_response(jsonify(dict('error':'Method Not Allowed')), 405)
+    return make_response(jsonify('error':'Method Not Allowed'), 405)
