@@ -197,7 +197,7 @@
           <li><a href="#"> Checkout this recent story</a> </li>
         </ul>
       </div>
-      <form class="ask_question animated bounceInLeft" action="index.html" method="post">
+      <form class="ask_question animated bounceInLeft" action="{{ url_for('home') }}" method="get">
         <textarea rows="5" class="form-control" placeholder="Ask question" id="question" name='question' required data-validation-required-message="Please enter a question first"></textarea>
         <script type="text/javascript">
           CKEDITOR.replace('question');
