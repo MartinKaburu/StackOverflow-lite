@@ -50,7 +50,7 @@ returns json data on the added question status_code 201
 
 or 
 
-returns 400 incase 'content' or 'owner' keys were not specified
+returns 400 incase 'content' or 'owner' keys were not specified in the json or the data is not in json format
 
 ->Answer a question
 
@@ -66,7 +66,7 @@ returns json data on the answered question status_code 201
 
 or 
 
-returns 400 incase 'answer_content' or 'answer_owner' keys were not specified
+returns 400 incase 'answer_content' or 'answer_owner' keys were not specified in the json or the data type is not json
 
 # errors:
     400 bad request
