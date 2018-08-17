@@ -24,3 +24,4 @@ deploy:
         provider: heroku
         api_key: "70359390-7474-4d89-a237-940e8a9aead8"   
         secure: "c306e7a9-ddb3-4357-8452-de63bb18a5d9"
+        app: stacksverflow-lite
