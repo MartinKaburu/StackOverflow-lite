@@ -24,3 +24,9 @@ def bad_request(error):
     ''' jsonify 400
     '''
     return make_response(jsonify({'error': 'Bad Request'}), 400)
+
+@APP.errorhandler(405)
+def bad_request(error):
+    '''error handler for Bad request
+    '''
+    return make_response(jsonify(dict('error':'Method Not Allowed')), 405)
