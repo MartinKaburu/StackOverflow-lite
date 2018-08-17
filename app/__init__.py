@@ -26,7 +26,7 @@ def bad_request(error):
     return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 @APP.errorhandler(405)
-def bad_request(error):
+def method_not_allowed(error):
     '''error handler for Bad request
     '''
     return make_response(jsonify({'error':'Method Not Allowed'}), 405)
