@@ -98,3 +98,13 @@ def answer_question(question_id):
         question[0]['answers'].append(answer)
         return jsonify({"question": question}), 201
     return abort(400), 400
+
+@BP.route('/delete/<int:question_id>')
+def remove_question(question_id):
+    ''' get specific question
+    '''
+    question = [question for question in QUESTIONS if question['id'] == question_id]
+    if not question:
+        return abort(404), 404
+    QUESTIONS.remove(question)
+    return jsonify({'Question deleted':'200'}), 200
