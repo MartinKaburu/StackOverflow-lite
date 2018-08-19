@@ -30,7 +30,7 @@ from flask import jsonify, Blueprint, abort, request
 # from app.resources.questions import QUESTIONS
 
 connection = psycopg.connect(dbname='stackoverflow', user='postgres', host='localhost', password='kaburu@andela')
-cursor = connection.cursor()
+
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -39,17 +39,29 @@ BP = Blueprint('api', __name__, url_prefix='/api/v1')
 def get_all():
     ''' get all questions
     '''
-    return jsonify({'QUESTIONS': QUESTIONS}), 200
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM questions;')
+    questions = cursor.fetchall()
+    cursor.close()
+    return jsonify({'QUESTIONS': questions}), 200
 
 
 @BP.route('/questions/<int:question_id>')
 def get_question(question_id):
     ''' get specific question
     '''
-    question = [question for question in QUESTIONS if question['id'] == question_id]
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM questions WHERE id=%s;'
+    cursor.execute(sql,([question_id]))
+    question = cursor.fetchall()
+    cursor.close()
     if not question:
         return abort(404), 404
-    return jsonify({'question': question[0]}), 200
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM answers WHERE question_id=%s'
+    cursor.execute(sql,[question_id])
+    answers = cursor.fetchall()
+    return jsonify({'question': question}, {'answers':answers}), 200
 
 
 @BP.route('/post_question', methods=['POST'])
@@ -57,26 +69,12 @@ def add_question():
     ''' add a question
     '''
     if request.json and request.json['owner'] and request.json['content']:
-        try:
-            question = {
-                'id': QUESTIONS[-1]['id']+1,
-                'owner': request.json['owner'],
-                'content': request.json['content'],
-                'answers': [],
-                'date_asked': dt.utcnow(),
-                'answered': False
-            }
-        except IndexError:
-            question = {
-                'id': 1,
-                'owner': request.json['owner'],
-                'content': request.json['content'],
-                'answers': [],
-                'date_asked': dt.utcnow(),
-                'answered': False
-            }
-        QUESTIONS.append(question)
-        return jsonify({'question': question}), 201
+        cursor = connection.cursor()
+        sql = 'INSERT INTO questions(content, question_owner) VALUES (%s, %s);'
+        cursor.execute(sql, (request.json['content'], request.json['owner']))
+        connection.commit()
+        cursor.close()
+        return jsonify({'201': 'Question added'}), 201
 
     return abort(400), 400
 
@@ -85,28 +83,32 @@ def add_question():
 def answer_question(question_id):
     '''answer a question
     '''
-    question = [question for question in QUESTIONS if question['id'] == question_id]
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM questions WHERE id=%s;'
+    cursor.execute(sql, ([question_id]))
+    question = cursor.fetchall()
     if not question:
         return abort(404), 404
     if request.json and request.json['answer_content'] and request.json['answer_owner']:
-        answer = {
-            "answer_owner": request.json['answer_owner'],
-            "answer_content": request.json['answer_content'],
-            "accepted": False,
-            "upvotes": 0,
-            "downvotes": 0,
-            "date_answered": dt.utcnow()
-        }
-        question[0]['answers'].append(answer)
-        return jsonify({"question": question}), 201
+        sql = 'INSERT INTO answers(answer_owner, content, question_id) VALUES (%s, %s, %s);'
+        cursor.execute(sql,(request.json['answer_owner'], request.json['answer_content'], question_id))
+        connection.commit()
+        cursor.close()
+        return jsonify({"201": "question answered"}), 201
     return abort(400), 400
 
 @BP.route('/delete/<int:question_id>')
 def remove_question(question_id):
     ''' get specific question
     '''
-    question = [question for question in QUESTIONS if question['id'] == question_id]
+    cursor = connection.cursor()
+    sql = 'SELECT * FROM questions WHERE id=%s;'
+    cursor.execute(sql,([question_id]))
+    question = cursor.fetchall()
     if not question:
         return abort(404), 404
-    QUESTIONS.remove(question)
+    sql = 'DELETE FROM questions WHERE id=%s;'
+    cursor.execute(sql,([question_id]))
+    connection.commit()
+    cursor.close()
     return jsonify({'Question deleted':'200'}), 200
