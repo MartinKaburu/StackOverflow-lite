@@ -24,11 +24,13 @@ errors:
 
 from datetime import datetime as dt
 
+import psycopg2 as psycopg
 from flask import jsonify, Blueprint, abort, request
 
 # from app.resources.questions import QUESTIONS
 
-QUESTIONS = []
+connection = psycopg.connect(dbname='stackoverflow', user='postgres', host='localhost', password='kaburu@andela')
+cursor = connection.cursor()
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 
