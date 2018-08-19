@@ -2,14 +2,19 @@
 '''
 
 from flask import Flask, make_response, jsonify
+import psycopg2 as psycopg
+
+
+APP = Flask(__name__, template_folder='./user_interface/templates', static_folder='./user_interface/static')
+CONNECTION = psycopg.connect(dbname='stackoverflow', user='postgres', host='localhost', password='kaburu@andela')
+
 from .api.v1 import endpoints
-
-
-APP = Flask(__name__, template_folder='./user_interface/templates', \
-static_folder='./user_interface/static')
+from .auth import login, register
 from .user_interface import views
 
 APP.register_blueprint(endpoints.BP)
+
+
 
 
 @APP.errorhandler(404)
