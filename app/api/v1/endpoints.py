@@ -25,6 +25,7 @@ errors:
 from datetime import datetime as dt
 
 from flask import jsonify, Blueprint, abort, request
+from flask_jwt import jwt_required, current_identity
 
 from app import CONNECTION
 
@@ -33,6 +34,7 @@ BP = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
 @BP.route('/questions', methods=['GET'])
+@jwt_required()
 def get_all():
     ''' get all questions
     '''
@@ -44,6 +46,7 @@ def get_all():
 
 
 @BP.route('/questions/<int:question_id>')
+@jwt_required()
 def get_question(question_id):
     ''' get specific question
     '''
@@ -62,6 +65,7 @@ def get_question(question_id):
 
 
 @BP.route('/post_question', methods=['POST'])
+@jwt_required()
 def add_question():
     ''' add a question
     '''
@@ -77,6 +81,7 @@ def add_question():
 
 
 @BP.route('/questions/<int:question_id>/answers', methods=['POST'])
+@jwt_required()
 def answer_question(question_id):
     '''answer a question
     '''
@@ -95,6 +100,7 @@ def answer_question(question_id):
     return abort(400), 400
 
 @BP.route('/delete/<int:question_id>', methods=['DELETE'])
+@jwt_required()
 def remove_question(question_id):
     ''' get specific question
     '''

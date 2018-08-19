@@ -4,16 +4,18 @@
 from flask import Flask, make_response, jsonify
 import psycopg2 as psycopg
 
+from config import Config
 
 APP = Flask(__name__, template_folder='./user_interface/templates', static_folder='./user_interface/static')
+APP.config.from_object(Config)
 CONNECTION = psycopg.connect(dbname='stackoverflow', user='postgres', host='localhost', password='kaburu@andela')
 
+
 from .api.v1 import endpoints
-from .auth import login, register
+from .auth import login, register_user, identity
 from .user_interface import views
 
 APP.register_blueprint(endpoints.BP)
-
 
 
 
