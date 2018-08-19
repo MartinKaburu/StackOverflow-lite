@@ -17,7 +17,10 @@ def login():
         sql = 'SELECT * FROM users WHERE email=%s;'
         cursor.execute(sql, ([email]))
         user = cursor.fetchall()
-        if check_password_hash(user[0][3], request.json['password']):
-            return jsonify({"200":"User logged in successfully"}), 200
-        return jsonify({"404":"Invalid user or credentials"}), 200
+        try:
+            if check_password_hash(user[0][3], request.json['password']):
+                return jsonify({"200":"User logged in successfully"}), 200
+            return jsonify({"404":"Invalid user or credentials"}), 200
+        except IndexError:
+            return jsonify({"404":"Invalid user or credentials"}), 200
     return abort(400), 400
