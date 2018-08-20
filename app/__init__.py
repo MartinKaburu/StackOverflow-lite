@@ -12,7 +12,7 @@ CONNECTION = psycopg.connect(dbname='stackoverflow', user='postgres', host='loca
 
 
 from .api.v1 import endpoints
-from .auth import login, register_user, identity
+from .auth import api_login, register_user, identity
 from .user_interface import views
 
 APP.register_blueprint(endpoints.BP)

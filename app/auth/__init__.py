@@ -14,7 +14,7 @@ class User(object):
         self.id = id
 
 
-@APP.route('/register', methods=['POST'])
+@APP.route('/api/v1/register', methods=['POST'])
 def register_user():
     '''Register new User
     '''
@@ -35,7 +35,6 @@ def register_user():
     return abort(400), 400
 
 
-@APP.route('/api/login', methods=['POST'])
 @jwt.authentication_handler
 def api_login(email, password):
     '''Login user
@@ -52,7 +51,6 @@ def api_login(email, password):
         return False
 
 
-
 @jwt.identity_handler
 def identity(payload):
     '''Define current user
@@ -63,6 +61,6 @@ def identity(payload):
     cursor.execute(sql, ([username]))
     user = cursor.fetchall()
     cursor.close()
-    return jsonify({"id":user})
+    return user[0][0]
 
 jwt = JWT(APP, api_login, identity)
