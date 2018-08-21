@@ -11,7 +11,7 @@ install:
 script:
         - coverage erase
         - coverage run --source=app -m app.tests.test_non_persistent_endpoints && coverage html
-        - pylint --output-format=text --unused-argument app
+        - pylint --output-format=text --ignore=unused-argument app
 
 
 after_success:
