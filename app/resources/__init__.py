@@ -1,3 +1,0 @@
-'''
-Create some resources here
-'''
