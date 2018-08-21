@@ -58,6 +58,7 @@ class ApiTests(unittest.TestCase):
     def test_jwt_validity(self):
         jwt = self.test_client().post('/api/v1/login',\
         data=json.dumps(self.login_user), headers={'Content-Type': 'application/json'})
+        print(jwt.data)
 
     def test_post_question(self):
         """Test that a user can post a new question
