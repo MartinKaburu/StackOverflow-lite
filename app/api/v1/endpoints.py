@@ -6,59 +6,23 @@ from datetime import datetime as dt
 from flask import jsonify, Blueprint, abort, request
 from flask_jwt import jwt_required, current_identity
 
-<<<<<<< HEAD
 from app import CONNECTION
-=======
->>>>>>> 3beadc8e238cad2fd9ece65512a14f5c3254acfc
 
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
-<<<<<<< HEAD
 @BP.route('/questions', methods=['GET'])
 @jwt_required()
 def get_all():
-=======
-@BP.route('/questions', methods=['GET', 'POST'])
-def get_and_add():
->>>>>>> 3beadc8e238cad2fd9ece65512a14f5c3254acfc
     ''' get all questions
     Post a new question
     '''
-<<<<<<< HEAD
     cursor = CONNECTION.cursor()
     cursor.execute('SELECT * FROM questions;')
     questions = cursor.fetchall()
     cursor.close()
     return jsonify({'QUESTIONS': questions}), 200
-=======
-    if request.method == 'POST':
-        if request.json and request.json['owner'] and request.json['content']:
-            try:
-                question = {
-                    'id': QUESTIONS[-1]['id']+1,
-                    'owner': request.json['owner'],
-                    'content': request.json['content'],
-                    'answers': [],
-                    'date_asked': dt.utcnow(),
-                    'answered': False
-                }
-            except IndexError:
-                question = {
-                    'id': 1,
-                    'owner': request.json['owner'],
-                    'content': request.json['content'],
-                    'answers': [],
-                    'date_asked': dt.utcnow(),
-                    'answered': False
-                }
-            QUESTIONS.append(question)
-            return jsonify({'question': question}), 201
-        return abort(400), 400
-
-    return jsonify({'QUESTIONS': QUESTIONS}), 200
->>>>>>> 3beadc8e238cad2fd9ece65512a14f5c3254acfc
 
 
 @BP.route('/questions/<int:question_id>')
@@ -81,7 +45,6 @@ def get_question(question_id):
     return jsonify({'question': question}, {'answers':answers}), 200
 
 
-<<<<<<< HEAD
 @BP.route('/post_question', methods=['POST'])
 @jwt_required()
 def add_question():
@@ -98,8 +61,6 @@ def add_question():
     return abort(400), 400
 
 
-=======
->>>>>>> 3beadc8e238cad2fd9ece65512a14f5c3254acfc
 @BP.route('/questions/<int:question_id>/answers', methods=['POST'])
 @jwt_required()
 def answer_question(question_id):
