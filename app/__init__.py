@@ -4,10 +4,10 @@
 from flask import Flask, make_response, jsonify
 import psycopg2 as psycopg
 
-from config import Test
+from config import Development
 
 APP = Flask(__name__)
-APP.config.from_object(Test)
+APP.config.from_object(Development)
 CONNECTION = psycopg.connect(\
     dbname=APP.config['DATABASE_NAME'], \
     user=APP.config['DATABASE_USER'], \
