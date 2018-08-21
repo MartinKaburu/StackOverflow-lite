@@ -5,10 +5,7 @@ from flask import Flask, make_response, jsonify
 from .api.v1 import endpoints
 
 
-APP = Flask(__name__, template_folder='./user_interface/templates', \
-static_folder='./user_interface/static')
-from .user_interface import views
-
+APP = Flask(__name__)
 APP.register_blueprint(endpoints.BP)
 
 
