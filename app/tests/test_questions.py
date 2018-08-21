@@ -34,7 +34,7 @@ class ApiTests(unittest.TestCase):
     def test_post_question(self):
         """Test that a user can post a new question
         """
-        res = self.test_client().post('/api/v1/post_question', \
+        res = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json'})
         self.assertEqual(res.status_code, 201)
         self.assertIn('application/json', res.content_type)
@@ -43,16 +43,16 @@ class ApiTests(unittest.TestCase):
     def test_get_all_questions(self):
         """Test that a user can get all the questions as json
         """
-        res = self.test_client().post('/api/v1/post_question',\
+        res = self.test_client().post('/api/v1/questions',\
         data=json.dumps(self.question), headers={'Content-Type': 'application/json'})
         self.assertEqual(res.status_code, 201)
-        res = self.test_client().post('/api/v1/post_question', \
+        res = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json'})
         self.assertEqual(res.status_code, 201)
-        res = self.test_client().post('/api/v1/post_question', \
+        res = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json'})
         self.assertEqual(res.status_code, 201)
-        res = self.test_client().post('/api/v1/post_question', \
+        res = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json'})
         self.assertEqual(res.status_code, 201)
         all_questions = self.test_client().get('/api/v1/questions')

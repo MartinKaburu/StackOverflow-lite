@@ -3,9 +3,6 @@ language: python
 python:
         -  2.7
 
-env:
-        - FLASK_APP=app FLASK_ENV=development
-
 install:
         - pip install -r requirements.txt
         - pip install codecov
@@ -18,9 +15,9 @@ script:
      
 
 after_success:
-        - codecov --token=e491af6c-4d42-41d6-a693-7c96f4dd5d67
+        - codecov --token=$codecov_token
 
 deploy:
   provider: heroku
-  api_key: "70359390-7474-4d89-a237-940e8a9aead8"
+  api_key: $api_key
   app: kaburu-stackoverflow-lite
