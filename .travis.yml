@@ -10,9 +10,9 @@ install:
 
 script:
         - coverage erase
-        - coverage run --source=app -m app.tests.test_questions && coverage html
-        - pylint --output-format=text --disable=wrong-import-position,unused-argument app
-     
+        - coverage run --source=app -m app.tests.test_non_persistent_endpoints && coverage html
+        - pylint --output-format=text --unused-argument app
+
 
 after_success:
         - codecov --token=$codecov_token
