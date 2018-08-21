@@ -1,6 +1,7 @@
 # StackOverflow-lite
 
 [![Build Status](https://travis-ci.com/MartinKaburu/StackOverflow-lite.svg?branch=master)](https://travis-ci.org/MartinKaburu/StackOverflow-lite)   [![codecov](https://codecov.io/gh/MartinKaburu/StackOverflow-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MartinKaburu/StackOverflow-lite)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/6a89cd9ab95f70bbddda)
 
 # github pages
 
@@ -35,7 +36,7 @@
         headers['Content_Type':'application/json']
         body['owner':'username','content':'the question']
         returns json data on the added question status_code 201
-        or 
+        or
         returns 400 incase 'content' or 'owner' keys were not specified in the json or the data is not in json format
 
         Answer a question::
@@ -44,7 +45,7 @@
         headers['Content_Type':'application/json']
         body['answer_owner':'username','answer_content':'the answer']
         returns json data on the answered question status_code 201
-        or 
+        or
         returns 400 incase 'answer_content' or 'answer_owner' keys were not specified in the json or the data type is not json
 
 # errors:
