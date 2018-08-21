@@ -6,7 +6,7 @@ import psycopg2 as psycopg
 
 from config import Development
 
-APP = Flask(__name__, template_folder='./user_interface/templates', static_folder='./user_interface/static')
+APP = Flask(__name__)
 APP.config.from_object(Development)
 CONNECTION = psycopg.connect(\
     dbname=APP.config['DATABASE_NAME'], \
@@ -18,7 +18,6 @@ CONNECTION = psycopg.connect(\
 
 from .api.v1 import endpoints
 from .auth import api_login, register_user, identity
-from .user_interface import views
 
 APP.register_blueprint(endpoints.BP)
 
