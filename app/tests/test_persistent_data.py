@@ -6,6 +6,11 @@ import json
 from app import APP, CONNECTION
 from config import Test
 
+def split_jwt(jwt):
+    jwt = json.dumps(jwt)
+    null, jwt = jwt.split(' "')
+    jwt, null = jwt.split('"}')
+    return jwt
 
 class ApiTests(unittest.TestCase):
     """This class holds all the test cases
@@ -15,7 +20,7 @@ class ApiTests(unittest.TestCase):
         """Instantiate the class
         """
         self.app = APP
-        self.app.config.from_object(Test)
+        self.app.config['JWT_AUTH_USERNAME_KEY'] = 'email'
         self.test_client = self.app.test_client
         self.question = {
             "content":"How to create an api?"
@@ -56,9 +61,11 @@ class ApiTests(unittest.TestCase):
         self.assertIn("access_token", jwt.data)
 
     def test_jwt_validity(self):
-        jwt = self.test_client().post('/api/v1/login',\
-        data=json.dumps(self.login_user), headers={'Content-Type': 'application/json'})
-        print(jwt.data)
+        user = self.test_client().post('/api/v1/login', data=json.dumps(self.login_user), headers={'Content_Type':'application/json'})
+        print(user.data)
+        jwt = split_jwt(user.json)
+        question = self.test_client().get('/api/v1/questions', headers={'Authentication': 'JWT '+jwt})
+
 
     def test_post_question(self):
         """Test that a user can post a new question

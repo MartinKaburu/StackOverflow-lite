@@ -31,9 +31,8 @@ answers = 'CREATE TABLE answers(\
     );'
 
 votes = 'CREATE TABLE votes(\
-id SERIAL REFERENCES answers(id)
+id SERIAL REFERENCES answers(id),\
 voter INT NOT NULL REFERENCES users(id), \
-
 );'
 
 try:
