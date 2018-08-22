@@ -2,7 +2,7 @@
 '''
 from app import CONNECTION
 
-class DatabaseDrivers():
+class DatabaseDriver(object):
     '''Class to define methods to drop and create tables
     '''
     def __init__(self):

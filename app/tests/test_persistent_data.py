@@ -6,12 +6,12 @@ import json
 from flask import jsonify
 
 from app import APP, CONNECTION
-from app.instance.models import Database
+from app.instance.models import DatabaseDriver
 from config import Test
 
 
 APP.config.from_object(Test)
-test = Database()
+test = DatabaseDriver()
 
 def split_jwt(jwt):
     jwt = json.dumps(jwt)
@@ -48,13 +48,13 @@ class ApiTests(unittest.TestCase):
             "password":"kaburu@andela"
         }
 
-        self.token = ''
+        #print(self.token)
 
 
     def get_token(self):
         '''Test user was successfully created
         '''
-        self.test_client().post('/api/v1/register',\
+        user = self.test_client().post('/api/v1/register',\
         data=json.dumps(self.reg_user), headers={'Content-Type': 'application/json'})
         user = self.test_client().post('/api/v1/login',\
         data=json.dumps(self.login_user), headers={'Content-Type': 'application/json'})
@@ -81,15 +81,15 @@ class ApiTests(unittest.TestCase):
     def test_login_returns_jwt(self):
         '''Test login returns json web token
         '''
-        self.test_client().post('/api/v1/register',\
+        user = self.test_client().post('/api/v1/register',\
         data=json.dumps(self.reg_user), headers={'Content-Type': 'application/json'})
         jwt = self.test_client().post('/api/v1/login',\
         data=json.dumps(self.login_user), headers={'Content-Type': 'application/json'})
         self.assertIn("access_token", jwt.data)
 
     def test_jwt_validity(self):
-        self.test_client().post('/api/v1/register',\
-        data=json.dumps(self.reg_user), headers={'Content-Type': 'application/json'})
+        user = self.test_client().post('/api/v1/register',\
+        data=json.dumps(self.reg_user), headers={'Content_Type': 'application/json'})
         user = self.test_client().post('/api/v1/login', data=json.dumps(self.login_user), headers={'Content-Type':'application/json'})
         jwt = split_jwt(user.json)
         questions = self.test_client().get('/api/v1/questions', headers={'Authorization': 'JWT {}'.format(jwt)})
@@ -99,6 +99,7 @@ class ApiTests(unittest.TestCase):
     def test_post_question(self):
         """Test that a user can post a new question
         """
+        self.token = self.get_token()
         self.token = self.get_token()
         res = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
@@ -124,9 +125,11 @@ class ApiTests(unittest.TestCase):
         data=json.dumps(self.question), headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
         self.assertEqual(res.status_code, 201)
         all_questions = self.test_client().get('/api/v1/questions', headers={'Authorization': 'JWT {}'.format(self.token)})
+
         self.assertEqual(all_questions.status_code, 200)
         self.assertEqual('application/json', all_questions.content_type)
         self.assertIn("How to create an api?", all_questions.data)
+
         cursor = CONNECTION.cursor()
         cursor.execute('SELECT * FROM questions;')
         questions = cursor.fetchall()
@@ -134,22 +137,20 @@ class ApiTests(unittest.TestCase):
         all = '"QUESTIONS"'
         self.assertIn(all, json.dumps(all_questions.json))
 
-
     def test_get_specific_question(self):
         """Test the api to return specific question as per the question id"""
         self.token = self.get_token()
-        self.test_client().post('/api/v1/questions', \
+        post_question = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
         question = self.test_client().get('/api/v1/questions/1', headers={'Authorization': 'JWT {}'.format(self.token)})
         self.assertEqual(question.status_code, 200)
         self.assertIn("How to create an api?", str(question.data))
 
-
     def test_post_answer(self):
         """Test to post an answer to a specific question
         """
         self.token = self.get_token()
-        self.test_client().post('/api/v1/questions', \
+        post_question = self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
         post_answer = self.test_client().post('/api/v1/questions/1/answers', \
         data=json.dumps(self.answer), headers={'Content-Type': 'application/json', "Authorization": 'JWT {}'.format(self.token)})

@@ -97,7 +97,6 @@ def remove_question(question_id):
         return jsonify({'Question deleted':'200'}), 200
     return jsonify({"401":"Unauthorized: Only question owner can remove question"})
 
-
 @BP.route('/upvote/<int:answer_id>', methods=['POST'])
 @jwt_required()
 def upvote_answer(answer_id):
@@ -105,19 +104,46 @@ def upvote_answer(answer_id):
     '''
     cursor = CONNECTION.cursor()
     sql = 'SELECT * FROM answers WHERE id=%s;'
-    cursor.execute(sql, ([answer_id]))
+    cursor.execute(sql, ([int(answer_id)]))
     answer = cursor.fetchall()
+    print(answer)
     if answer:
-        try:
-            if str(current_identity) in answer[0][7]:
-                return jsonify({"400":"You can only vote once"})
-        except TypeError:
-            pass
-        answer[0] = list(answer[0])
-        answer[0][3] +=1
-        sql = 'SELECT array_append(voters[], %s);'
-        cursor.execute(sql, ([str(current_identity)]))
-        answer[0] = tuple(answer[0])
+        print("here")
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
+        cursor.execute(sql, (answer_id, int(current_identity)))
+        voted = cursor.fetchall()
+        print(voted)
+        if voted:
+            return jsonify({'400':'You can only vote once'}), 400
+        sql = 'UPDATE answers SET upvotes = upvotes + 1 WHERE id=%s;'
+        cursor.execute(sql, ([answer_id]))
         CONNECTION.commit()
         cursor.close()
+        return jsonify({"200":"Voted successfully"})
+    return abort(404)
+
+
+@BP.route('/downvote/<int:answer_id>', methods=['POST'])
+@jwt_required()
+def downvote_answer(answer_id):
+    '''downvote answers
+    '''
+    cursor = CONNECTION.cursor()
+    sql = 'SELECT * FROM answers WHERE id=%s;'
+    cursor.execute(sql, ([int(answer_id)]))
+    answer = cursor.fetchall()
+    print(answer)
+    if answer:
+        print("here")
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
+        cursor.execute(sql, (answer_id, int(current_identity)))
+        voted = cursor.fetchall()
+        print(voted)
+        if voted:
+            return jsonify({'400':'You can only vote once'}), 400
+        sql = 'UPDATE answers SET downvotes = downvotes + 1 WHERE id=%s;'
+        cursor.execute(sql, ([answer_id]))
+        CONNECTION.commit()
+        cursor.close()
+        return jsonify({"200":"Voted successfully"})
     return abort(404)

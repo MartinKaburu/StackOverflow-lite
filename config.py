@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 
 class Development(object):
@@ -10,6 +11,7 @@ class Development(object):
     DATABASE_HOST = 'localhost'
     DATABASE_PASSWORD = 'kaburu@andela'
     DATABASE_USER = 'postgres'
+    JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
     TRACK_MODIFICATIONS = True
     debug = True
 
@@ -25,3 +27,4 @@ class Test(object):
     DATABASE_USER = 'postgres'
     TRACK_MODIFICATIONS = True
     debug = True
+    JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
