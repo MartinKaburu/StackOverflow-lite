@@ -147,3 +147,30 @@ def downvote_answer(answer_id):
         cursor.close()
         return jsonify({"200":"Voted successfully"})
     return abort(404)
+
+
+@BP.route('/accept/<int:answer_id>', methods=['POST'])
+@jwt_required()
+def accept_answer(answer_id):
+    '''Mark answer as accepted
+    '''
+    cursor = CONNECTION.cursor()
+    sql = 'SELECT * FROM answers WHERE id=%s;'
+    cursor.execute(sql, ([int(answer_id)]))
+    answer = cursor.fetchall()
+    if answer:
+        sql = 'SELECT * FROM questions WHERE id=%s AND question_owner=%s;'
+        cursor.execute(sql, (int(answer[0][6]), int(current_identity)))
+        question = cursor.fetchall()
+        if question:
+            sql = 'SELECT * FROM answers WHERE id=%s AND accepted=TRUE'
+            cursor.execute(sql, ([answer[0][0]]))
+            accepted = cursor.fetchall()
+            if not accepted:
+                sql = 'UPDATE answers SET accepted = TRUE WHERE id=%s;'
+                cursor.execute(sql, ([answer[0][0]]))
+                CONNECTION.commit()
+                return jsonify({"200":"Answer Accepted"})
+            return jsonify({"400":"You can only accept one answer per question"})
+        return jsonify({"401":"Ony the question owner can accept answer"})
+    return abort(404)
