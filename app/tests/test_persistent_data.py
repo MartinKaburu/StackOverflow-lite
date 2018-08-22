@@ -12,12 +12,15 @@ from config import Test
 
 APP.config.from_object(Test)
 test = DatabaseDriver()
+print(APP.config['DATABASE_NAME'])
 
 def split_jwt(jwt):
+    print(jwt)
     jwt = json.dumps(jwt)
     null, jwt = jwt.split(' "')
     jwt, null = jwt.split('"}')
     jwt[0:1].strip('"')
+    print(jwt)
     return jwt
 
 
@@ -47,8 +50,6 @@ class ApiTests(unittest.TestCase):
             "email":"martinkaburu.m@gmail.com",
             "password":"kaburu@andela"
         }
-
-        #print(self.token)
 
 
     def get_token(self):
@@ -89,7 +90,7 @@ class ApiTests(unittest.TestCase):
 
     def test_jwt_validity(self):
         user = self.test_client().post('/api/v1/register',\
-        data=json.dumps(self.reg_user), headers={'Content_Type': 'application/json'})
+        data=json.dumps(self.reg_user), headers={'Content-Type': 'application/json'})
         user = self.test_client().post('/api/v1/login', data=json.dumps(self.login_user), headers={'Content-Type':'application/json'})
         jwt = split_jwt(user.json)
         questions = self.test_client().get('/api/v1/questions', headers={'Authorization': 'JWT {}'.format(jwt)})
