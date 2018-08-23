@@ -7,9 +7,9 @@ class Development(object):
     JWT_AUTH_USERNAME_KEY = 'email'
     JWT_AUTH_ENDPOINT = 'api_login'
     JWT_VERIFY_EXPIRATION = True
-    DATABASE_NAME = 'd5gcv7646io26h'
-    DATABASE_HOST = 'ec2-107-22-221-60.compute-1.amazonaws.com'
-    DATABASE_PASSWORD = '245e9cfaaa8251df376234a231ebe0205ed5fb6264a8e9c9b689eee128dda3a9'
+    DATABASE_NAME = os.environ.get('DATABASE_NAME')
+    DATABASE_HOST = os.environ.get('DATABASE_HOST')
+    DATABASE_PASSWORD = os.envron.get('DATABASE_PASSWORD')
     DATABASE_USER = 'ogsfvuckhnbkgu'
     JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
     TRACK_MODIFICATIONS = True
