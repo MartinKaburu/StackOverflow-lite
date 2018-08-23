@@ -2,7 +2,8 @@ language: python
 
 python:
         -  2.7
-
+env:
+    - DEV
 install:
         - pip install -r requirements.txt
         - pip install codecov
@@ -10,14 +11,9 @@ install:
 
 script:
         - coverage erase
-        - coverage run --source=app -m app.tests.test_questions && coverage html
+        - pytest
         - pylint --output-format=text --disable=wrong-import-position,unused-argument app
-     
+
 
 after_success:
         - codecov --token=$codecov_token
-
-deploy:
-  provider: heroku
-  api_key: $api_key
-  app: kaburu-stackoverflow-lite
