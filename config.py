@@ -10,7 +10,7 @@ class Development(object):
     DATABASE_NAME = os.environ.get('DATABASE_NAME')
     DATABASE_HOST = os.environ.get('DATABASE_HOST')
     DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
-    DATABASE_USER = 'ogsfvuckhnbkgu'
+    DATABASE_USER = os.environ.get('DATABASE_USER')
     JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
     TRACK_MODIFICATIONS = True
     debug = True
