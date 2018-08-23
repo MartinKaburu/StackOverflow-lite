@@ -48,7 +48,6 @@ class DatabaseDriver(object):
     def drop_all(self):
         '''Drop tables
         '''
-        cursor = CONNECTION.commit()
         cursor = CONNECTION.cursor()
         cursor.execute('DROP TABLE votes, answers, questions, users;')
         CONNECTION.commit()

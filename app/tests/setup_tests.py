@@ -3,15 +3,14 @@ import json
 
 from app import APP
 from app.instance.models import DatabaseDriver
-from config import Test
 
 
 class BaseTest(TestCase):
     def setUp(self):
         """Instantiate the class
         """
+
         self.test = DatabaseDriver()
-        APP.config.from_object(Test)
         self.test.create_all()
         self.app = APP
         self.test_client = self.app.test_client

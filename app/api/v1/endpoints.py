@@ -121,7 +121,7 @@ def answer_question(question_id):
     return abort(404), 404
 
 
-@BP.route('/update/<int:question_id>/<int:answer_id>', methods=['POST'])
+@BP.route('/update/<int:question_id>/<int:answer_id>', methods=['PUT'])
 @jwt_required()
 def update_answer(question_id, answer_id):
     ''' get specific question
