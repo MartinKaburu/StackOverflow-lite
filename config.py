@@ -21,10 +21,10 @@ class Test(object):
     JWT_AUTH_USERNAME_KEY = 'email'
     JWT_AUTH_ENDPOINT = 'api_login'
     JWT_VERIFY_EXPIRATION = True
-    DATABASE_NAME = 'stackoverflow_test'
-    DATABASE_HOST = 'localhost'
-    DATABASE_PASSWORD = 'kaburu@andela'
-    DATABASE_USER = 'postgres'
+    DATABASE_NAME = os.environ.get('DATABASE_NAME')
+    DATABASE_HOST = os.environ.get('DATABASE_HOST')
+    DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+    DATABASE_USER = os.environ.get('DATABASE_USER'
     TRACK_MODIFICATIONS = True
     debug = True
     JWT_EXPIRATION_DELTA = timedelta(seconds=1800)

@@ -16,7 +16,7 @@ id SERIAL PRIMARY KEY,
 content TEXT NOT NULL,
 answer_owner INT NOT NULL REFERENCES users(id),
 upvotes INT DEFAULT 0,
-downvotes INT DEFAULT 0, 
+downvotes INT DEFAULT 0,
 accepted BOOLEAN DEFAULT FALSE,
 question_id INT NOT NULL REFERENCES questions(id)
 );
@@ -24,4 +24,4 @@ question_id INT NOT NULL REFERENCES questions(id)
 CREATE TABLE IF NOT EXISTS votes(
 id SERIAL REFERENCES answers(id),
 voter INT NOT NULL REFERENCES users(id)
-);'
+);
