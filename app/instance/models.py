@@ -5,10 +5,7 @@ from app import CONNECTION
 class DatabaseDriver(object):
     '''Class to define methods to drop and create tables
     '''
-    def __init__(self):
-        '''Create a cursor
-        '''
-        self.cursor = CONNECTION.cursor()
+
 
     def create_all(self):
         '''create db
@@ -40,16 +37,19 @@ class DatabaseDriver(object):
         id SERIAL REFERENCES answers(id),\
         voter INT NOT NULL REFERENCES users(id) \
         );'
-
-        self.cursor.execute(users)
-        self.cursor.execute(questions)
-        self.cursor.execute(answers)
-        self.cursor.execute(votes)
+        cursor = CONNECTION.cursor()
+        cursor.execute(users)
+        cursor.execute(questions)
+        cursor.execute(answers)
+        cursor.execute(votes)
         CONNECTION.commit()
+        cursor.close()
 
     def drop_all(self):
-        '''Drop database
+        '''Drop tables
         '''
-        self.cursor = CONNECTION.cursor()
-        self.cursor.execute('DROP TABLE votes, answers, questions, users;')
+        cursor = CONNECTION.commit()
+        cursor = CONNECTION.cursor()
+        cursor.execute('DROP TABLE votes, answers, questions, users;')
         CONNECTION.commit()
+        cursor.close()

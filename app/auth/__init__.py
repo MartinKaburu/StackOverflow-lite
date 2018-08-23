@@ -15,7 +15,7 @@ class User(object):
         self.id = id
 
 
-@APP.route('/api/v1/auth/register', methods=['POST'])
+@APP.route('/api/v1/auth/signup', methods=['POST'])
 def register_user():
     '''Register new User
     '''

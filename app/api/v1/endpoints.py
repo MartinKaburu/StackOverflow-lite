@@ -97,8 +97,8 @@ def get_question(question_id):
             cursor.close()
             CONNECTION.commit()
             return jsonify({'Question deleted':'200'}), 200
-        return abort(404), 404
-    return jsonify({"401":"Unauthorized: Only question owner can remove question"})
+        return jsonify({"401":"Unauthorized: Only question owner can remove question"})
+    return abort(404), 404
 
 
 @BP.route('/questions/<int:question_id>/answers', methods=['POST'])
