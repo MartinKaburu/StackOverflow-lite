@@ -1,9 +1,13 @@
+'''Module to test mark answer as preferred functionality
+'''
 import json
 
-from setup_tests import BaseTest
+from app.tests.setup_tests import BaseTest
 
 
 class TestAccept(BaseTest):
+    '''Test mark preferred functionality
+    '''
     def test_accept_answer(self):
         """Test the user can accept specific answers"""
         self.token = self.get_token()
@@ -11,10 +15,10 @@ class TestAccept(BaseTest):
         data=json.dumps(self.question), \
         headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
         self.assertEqual(post_question.status_code, 201)
-        post_answer = self.test_client().post('/api/v1/questions/1/answers', \
+        self.test_client().post('/api/v1/questions/1/answers', \
         data=json.dumps(self.answer), \
         headers={'Content-Type': 'application/json', "Authorization": 'JWT {}'.format(self.token)})
-        post_answer = self.test_client().post('/api/v1/questions/1/answers', \
+        self.test_client().post('/api/v1/questions/1/answers', \
         data=json.dumps(self.answer), \
         headers={'Content-Type': 'application/json', "Authorization": 'JWT {}'.format(self.token)})
         accept_answer = self.test_client().post('/api/v1/accept/1', \

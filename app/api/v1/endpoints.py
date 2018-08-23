@@ -1,8 +1,5 @@
 '''api endpoints
 '''
-
-from datetime import datetime as dt
-
 from flask import jsonify, Blueprint, abort, request
 from flask_jwt import jwt_required, current_identity
 
@@ -25,12 +22,12 @@ def get_and_post():
         cursor.close()
         display = []
         for question in questions:
-            format = {
+            retformat = {
                 "question_id":question[0],
                 "content":question[1],
                 "owner_id":question[2]
             }
-            display.append(format)
+            display.append(retformat)
         return jsonify({"QUESTIONS":display}), 200
     elif request.method == 'POST':
         if request.json and request.json['content']:
@@ -63,7 +60,7 @@ def get_delete_question(question_id):
             display_ans = []
             for answer in answers:
                 answer = list(answer)
-                format = {
+                retformat = {
                     "answer_id":answer[0],
                     "answer_content":answer[1],
                     "answer_owner":answer[2],
@@ -72,14 +69,14 @@ def get_delete_question(question_id):
                     "accepted":answer[5],
                     "question_id":answer[6],
                 }
-                display_ans.append(format)
+                display_ans.append(retformat)
             display = [
-            {
-                "question_id": question[0][0],
-                "content": question[0][1],
-                "question_owner": question[0][2],
-                "answers": display_ans
-            }
+                {
+                    "question_id": question[0][0],
+                    "content": question[0][1],
+                    "question_owner": question[0][2],
+                    "answers": display_ans
+                }
             ]
             cursor.close()
             return jsonify(display), 200
@@ -112,8 +109,10 @@ def answer_question(question_id):
     question = cursor.fetchall()
     if question:
         if request.json and request.json['answer_content']:
-            sql = 'INSERT INTO answers(answer_owner, content, question_id) VALUES (%s, %s, %s);'
-            cursor.execute(sql,(int(current_identity), request.json['answer_content'], question_id))
+            sql = 'INSERT INTO answers(answer_owner, content, question_id) \
+            VALUES (%s, %s, %s);'
+            cursor.execute(sql, \
+            (int(current_identity), request.json['answer_content'], question_id))
             CONNECTION.commit()
             cursor.close()
             return jsonify({"201": "question answered"}), 201
@@ -153,13 +152,10 @@ def upvote_answer(answer_id):
     sql = 'SELECT * FROM answers WHERE id=%s;'
     cursor.execute(sql, ([int(answer_id)]))
     answer = cursor.fetchall()
-    print(answer)
     if answer:
-        print("here")
         sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
         cursor.execute(sql, (int(answer[0][0]), int(current_identity)))
         voted = cursor.fetchall()
-        print(voted)
         if not voted:
             sql = 'UPDATE answers SET upvotes = upvotes + 1 WHERE id=%s;'
             cursor.execute(sql, ([answer_id]))
@@ -179,13 +175,10 @@ def downvote_answer(answer_id):
     sql = 'SELECT * FROM answers WHERE id=%s;'
     cursor.execute(sql, ([int(answer_id)]))
     answer = cursor.fetchall()
-    print(answer)
     if answer:
-        print("here")
         sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
         cursor.execute(sql, (answer_id, int(current_identity)))
         voted = cursor.fetchall()
-        print(voted)
         if not voted:
             sql = 'UPDATE answers SET downvotes = downvotes + 1 WHERE id=%s;'
             cursor.execute(sql, ([answer_id]))

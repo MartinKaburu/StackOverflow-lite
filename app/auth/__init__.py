@@ -11,6 +11,8 @@ from app import CONNECTION, APP
 jwt = JWT()
 
 class User(object):
+    '''Create object for jwt
+    '''
     def __init__(self, id):
         self.id = id
 
@@ -19,7 +21,10 @@ class User(object):
 def register_user():
     '''Register new User
     '''
-    if request.json and request.json['username'] and request.json['email'] and request.json['password']:
+    if request.json and \
+    request.json['username'] and \
+    request.json['email'] and \
+    request.json['password']:
         email = request.json['email']
         password = request.json['password']
         username = request.json['username']

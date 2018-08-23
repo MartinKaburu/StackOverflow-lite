@@ -1,13 +1,17 @@
+'''Module to test the delete functionality
+'''
 import json
 
-from setup_tests import BaseTest
+from app.tests.setup_tests import BaseTest
 
 
 class TestDelete(BaseTest):
+    '''Class to test delete functionality
+    '''
     def test_delete_question(self):
         """Test the user can delete questions they posted"""
         self.token = self.get_token()
-        post_question = self.test_client().post('/api/v1/questions', \
+        self.test_client().post('/api/v1/questions', \
         data=json.dumps(self.question), \
         headers={'Content-Type': 'application/json', 'Authorization': 'JWT {}'.format(self.token)})
         delete_question = self.test_client().delete('/api/v1/questions/1', \

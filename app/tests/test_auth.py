@@ -1,10 +1,13 @@
-from unittest import TestCase
+'''Modulle to test authentication
+'''
 import json
 
 from app.tests.setup_tests import BaseTest
 
 
 class TestAuth(BaseTest):
+    '''class to test authentication
+    '''
     def test_register_user(self):
         '''Test user registration in persistent database
         '''

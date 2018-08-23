@@ -2,8 +2,6 @@ language: python
 
 python:
         -  2.7
-env:
-    - DEV
 install:
         - pip install -r requirements.txt
         - pip install codecov
@@ -12,7 +10,6 @@ install:
 script:
         - coverage erase
         - pytest
-        - pylint --output-format=text --disable=wrong-import-position,unused-argument app
 
 
 after_success:
