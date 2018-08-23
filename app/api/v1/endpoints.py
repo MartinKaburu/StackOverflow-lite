@@ -45,7 +45,7 @@ def get_and_post():
 
 @BP.route('/questions/<int:question_id>', methods=['GET', 'DELETE'])
 @jwt_required()
-def get_question(question_id):
+def get_delete_question(question_id):
     ''' get specific question
     '''
     if request.method == 'GET':
