@@ -214,3 +214,47 @@ def accept_answer(answer_id):
             return jsonify({"400":"You can only accept one answer per question"})
         return jsonify({"401":"Ony the question owner can accept answer"})
     return abort(404)
+
+@BP.route('/search', methods=['POST'])
+@jwt_required()
+def search():
+    '''search the db
+    '''
+    if request.json and request.json['search']:
+        search = request.json['search']
+        cursor = CONNECTION.cursor()
+        sql = 'SELECT * FROM questions WHERE content LIKE %s;'
+        cursor.execute(sql, [search])
+        results = cursor.fetchall()
+        if results:
+            res = []
+            sql = 'SELECT * FROM answers WHERE question_id=%s;'
+            for question in results:
+                question = list(question)
+                question[0] = str(question[0])
+                cursor.execute(sql, question[0])
+                answers = cursor.fetchall()
+                display_ans = []
+                for answer in answers:
+                    answer = list(answer)
+                    retans = {
+                        "answer_id":answer[0],
+                        "answer_content":answer[1],
+                        "answer_owner":answer[2],
+                        "upvotes":answer[3],
+                        "downvotes":answer[4],
+                        "accepted":answer[5],
+                        "question_id":answer[6]
+                    }
+                    display_ans.append(retans)
+                retformat = {
+                    "id":question[0],
+                    "content":question[1],
+                    "owner_id":question[2],
+                    "answers":display_ans
+                }
+                res.append(retformat)
+                cursor.close()
+            return jsonify({"RESULTS":res})
+        return jsonify({"404":"No matching results"})
+    return jsonify({"400":"Missing parameters"})

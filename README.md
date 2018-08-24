@@ -100,6 +100,15 @@
         methods=['POST']
         headers["Authorization":"JWT {access_token}"]
         returns 201 when accepted, 404 invalid answer, 400 already voted, 401 unauthorized
+
+        Search questions:
+        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/search
+        methods=["POST"]
+        headers["Authorization":"JWT {access_token}"]
+        body = {
+            "search":"key words"
+        }
+        returns 200 and questions found, 404 if no questions found
 # errors:
     400 bad request
     404 resource not found
