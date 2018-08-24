@@ -1,6 +1,7 @@
 # StackOverflow-lite
 
-[![Build Status](https://travis-ci.com/MartinKaburu/StackOverflow-lite.png)](https://travis-ci.org/MartinKaburu/StackOverflow-lite)   [![codecov](https://codecov.io/gh/MartinKaburu/StackOverflow-lite/branch/development/graph/badge.svg)](https://codecov.io/gh/MartinKaburu/StackOverflow-lite)
+[![Build Status](https://travis-ci.org/MartinKaburu/StackOverflow-lite.svg?branch=development)](https://travis-ci.org/MartinKaburu/StackOverflow-lite)
+[![codecov](https://codecov.io/gh/MartinKaburu/StackOverflow-lite/branch/master/graph/badge.svg)](https://codecov.io/gh/MartinKaburu/StackOverflow-lite)
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/6a89cd9ab95f70bbddda)
 
 # github pages
@@ -22,8 +23,8 @@
                 "email":"email",
                 "password":"password"
                 }
-        
-    
+
+
         login::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/auth/login
         methods['POST']
@@ -66,13 +67,13 @@
         returns json data on the answered question status_code 201
         or
         returns 400 incase 'answer_content' key is not specified in the json or the data type is not json
-        
+
         Delete a question::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions/{int:question_id}
         methods=['DELETE']
         headers['Content_Type':'application/json', "Authorization":"JWT {access_token}"]
         returns 200 : "Question deleted", or 404, or 400 if the user is unauthorized
-        
+
         Update answer::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/update/{question_id}/{answer_id}
         methods=['POST']
@@ -81,19 +82,19 @@
                 "content":"answer update"
                }
         returns 201 if successfull, 404 if invaid answer, 401 in unauthorized
-        
+
         upvote answer::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/upvote/1
         methods=['POST']
         headers["Authorization":"JWT {access_token}"]
         returns 200 if successfull, 404 if invalid answer, 401 if unauthorized access
-        
+
         downvote answer::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/downvote/1
         methods=['POST']
         headers["Authorization":"JWT {access_token}"]
         returns 200 if successfull, 404 if invalid answer, 401 if unauthorized access
-        
+
         Accept answer::
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/accept/{answer_id}
         methods=['POST']
