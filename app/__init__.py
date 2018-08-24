@@ -8,9 +8,9 @@ import psycopg2 as psycopg
 from config import Development, Test
 
 APP = Flask(__name__)
-if os.environ['CONTEXT'] == 'TEST':
+if os.getenv('CONTEXT') == 'TEST':
     APP.config.from_object(Test)
-elif os.environ['CONTEXT'] == 'DEV':
+elif os.getenv('CONTEXT') == 'DEV':
     APP.config.from_object(Development)
 
 CONNECTION = psycopg.connect(\

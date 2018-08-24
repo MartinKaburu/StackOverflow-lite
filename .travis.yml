@@ -9,8 +9,8 @@ install:
 
 script:
         - coverage erase
-        - pytest
+        - pytest --cov app
 
 
 after_success:
-        - codecov --token=$codecov_token
+        - codecov 
