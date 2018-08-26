@@ -49,7 +49,6 @@ def register_user():
 
 
 @jwt.authentication_handler
-@cross_origin()
 def api_login(email, password):
     '''Login user
     '''
