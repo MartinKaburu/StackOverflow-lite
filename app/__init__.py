@@ -4,6 +4,8 @@ import os
 
 from flask import Flask, make_response, jsonify
 import psycopg2 as psycopg
+from flask_cors import CORS
+
 from config import Development, Test
 
 APP = Flask(__name__)
@@ -19,12 +21,11 @@ CONNECTION = psycopg.connect(\
     password=APP.config['DATABASE_PASSWORD']\
     )
 
-
+CORS(APP, resources=r'/api/*')
 from .api.v1 import endpoints
 from .auth import api_login, register_user, identity
 
 APP.register_blueprint(endpoints.BP)
-
 
 
 @APP.errorhandler(404)
