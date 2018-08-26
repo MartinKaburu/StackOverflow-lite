@@ -4,7 +4,6 @@ import os
 
 from flask import Flask, make_response, jsonify
 import psycopg2 as psycopg
-
 from config import Development, Test
 
 APP = Flask(__name__)

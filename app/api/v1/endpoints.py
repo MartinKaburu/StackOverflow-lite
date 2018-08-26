@@ -2,12 +2,13 @@
 '''
 from flask import jsonify, Blueprint, abort, request
 from flask_jwt import jwt_required, current_identity
+from flask_cors import CORS
 
 from app import CONNECTION
 
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
-
+CORS(BP)
 
 @BP.route('/questions', methods=['GET', 'POST'])
 @jwt_required()

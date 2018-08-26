@@ -5,6 +5,7 @@ import re
 from flask import request, jsonify, make_response, abort
 from werkzeug.security import  generate_password_hash, check_password_hash
 from flask_jwt import JWT
+from flask_cors import cross_origin
 
 from app import CONNECTION, APP
 
@@ -18,6 +19,7 @@ class User(object):
 
 
 @APP.route('/api/v1/auth/signup', methods=['POST'])
+@cross_origin()
 def register_user():
     '''Register new User
     '''
@@ -47,6 +49,7 @@ def register_user():
 
 
 @jwt.authentication_handler
+@cross_origin()
 def api_login(email, password):
     '''Login user
     '''
