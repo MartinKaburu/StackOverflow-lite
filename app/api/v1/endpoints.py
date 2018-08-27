@@ -5,10 +5,12 @@ from flask_jwt import jwt_required, current_identity
 from flask_cors import CORS
 
 from app import CONNECTION
+from app.api.v1.endpoint_models import Users, Questions, Answers
 
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 CORS(BP)
+
 
 @BP.route('/questions', methods=['GET', 'POST'])
 @jwt_required()
@@ -17,10 +19,8 @@ def get_and_post():
     Post a new question
     '''
     if request.method == 'GET':
-        cursor = CONNECTION.cursor()
-        cursor.execute('SELECT * FROM questions;')
-        questions = cursor.fetchall()
-        cursor.close()
+        questions = Questions()
+        questions = questions.get_all()
         display = []
         for question in questions:
             retformat = {
@@ -32,11 +32,10 @@ def get_and_post():
         return jsonify({"QUESTIONS":display}), 200
     elif request.method == 'POST':
         if request.json and request.json['content']:
-            cursor = CONNECTION.cursor()
-            sql = 'INSERT INTO questions(content, question_owner) VALUES (%s, %s);'
-            cursor.execute(sql, (request.json['content'], int(current_identity)))
-            CONNECTION.commit()
-            cursor.close()
+            content = request.json['content']
+            answer_owner = int(current_identity)
+            question = Questions()
+            question.save(content, answer_owner)
             return jsonify({'201': 'Question added'}), 201
         return abort(400), 400
 
@@ -46,18 +45,13 @@ def get_and_post():
 def get_delete_question(question_id):
     ''' get specific question
     '''
+    question = Questions()
     if request.method == 'GET':
         display = []
-        cursor = CONNECTION.cursor()
-        sql = 'SELECT * FROM questions WHERE id=%s;'
-        cursor.execute(sql, ([question_id]))
-        question = cursor.fetchall()
-        cursor.close()
+        question = question.get_one(question_id)
         if question:
-            cursor = CONNECTION.cursor()
-            sql = 'SELECT * FROM answers WHERE question_id=%s'
-            cursor.execute(sql, [question_id])
-            answers = cursor.fetchall()
+            answers = Answers()
+            answers = answers.get_by_question_id(question_id)
             display_ans = []
             for answer in answers:
                 answer = list(answer)
@@ -79,21 +73,12 @@ def get_delete_question(question_id):
                     "answers": display_ans
                 }
             ]
-            cursor.close()
             return jsonify(display), 200
         return abort(404), 404
-    cursor = CONNECTION.cursor()
-    sql = 'SELECT * FROM questions WHERE id=%s;'
-    cursor.execute(sql, ([question_id]))
-    question = cursor.fetchall()
-    if question:
-        if int(current_identity) is question[0][2]:
-            sql = 'DELETE FROM answers WHERE question_id=%s;'
-            cursor.execute(sql, ([question_id]))
-            sql = 'DELETE FROM questions WHERE id=%s;'
-            cursor.execute(sql, ([question_id]))
-            cursor.close()
-            CONNECTION.commit()
+    que = question.get_one(question_id)
+    if que:
+        if int(current_identity) is que[0][2]:
+            question.delete_question(question_id)
             return jsonify({'Question deleted':'200'}), 200
         return jsonify({"401":"Unauthorized: Only question owner can remove question"})
     return abort(404), 404
@@ -104,18 +89,14 @@ def get_delete_question(question_id):
 def answer_question(question_id):
     '''answer a question
     '''
-    cursor = CONNECTION.cursor()
-    sql = 'SELECT * FROM questions WHERE id=%s;'
-    cursor.execute(sql, ([question_id]))
-    question = cursor.fetchall()
+    question = Questions()
+    question = question.get_one(question_id)
     if question:
         if request.json and request.json['answer_content']:
-            sql = 'INSERT INTO answers(answer_owner, content, question_id) \
-            VALUES (%s, %s, %s);'
-            cursor.execute(sql, \
-            (int(current_identity), request.json['answer_content'], question_id))
-            CONNECTION.commit()
-            cursor.close()
+            answer = Answers()
+            content = request.json['answer_content']
+            answer_owner = int(current_identity)
+            answer.add_answer(answer_owner, content, question_id)
             return jsonify({"201": "question answered"}), 201
         return abort(400), 400
     return abort(404), 404
@@ -123,24 +104,13 @@ def answer_question(question_id):
 
 @BP.route('/update/<int:question_id>/<int:answer_id>', methods=['PUT'])
 @jwt_required()
-def update_answer(question_id, answer_id):
-    ''' get specific question
+def update(question_id, answer_id):
+    ''' update an answer
     '''
     if request.json and request.json['content']:
-        update = request.json['content']
-        cursor = CONNECTION.cursor()
-        sql = 'SELECT * FROM answers WHERE id=%s AND question_id=%s;'
-        cursor.execute(sql, (answer_id, question_id))
-        answer = cursor.fetchall()
-        if answer:
-            if answer[0][2] == int(current_identity):
-                sql = 'UPDATE answers SET content = %s WHERE id=%s AND question_id=%s;'
-                cursor.execute(sql, (update, answer_id, question_id))
-                CONNECTION.commit()
-                cursor.close()
-                return jsonify({"201":"answer updated successfully"})
-            return jsonify({"401":"Unauthorized, Ony answer ower can update answer"})
-        return abort(404)
+        content = request.json['content']
+        answer = Answers()
+        return answer.update_answer(answer_id, question_id, content, current_identity)
     return abort(400)
 
 
@@ -149,19 +119,12 @@ def update_answer(question_id, answer_id):
 def upvote_answer(answer_id):
     '''Upvote answers
     '''
-    cursor = CONNECTION.cursor()
-    sql = 'SELECT * FROM answers WHERE id=%s;'
-    cursor.execute(sql, ([int(answer_id)]))
-    answer = cursor.fetchall()
-    if answer:
-        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
-        cursor.execute(sql, (int(answer[0][0]), int(current_identity)))
-        voted = cursor.fetchall()
+    answer = Answers()
+    ans = answer.get_by_answer_id(answer_id)
+    if ans:
+        voted = answer.voted(int(ans[0][0]), int(current_identity))
         if not voted:
-            sql = 'UPDATE answers SET upvotes = upvotes + 1 WHERE id=%s;'
-            cursor.execute(sql, ([answer_id]))
-            CONNECTION.commit()
-            cursor.close()
+            answer.upvote(answer_id)
             return jsonify({"200":"Voted successfully"})
         return jsonify({'400':'You can only vote once'}), 400
     return abort(404)
@@ -172,19 +135,11 @@ def upvote_answer(answer_id):
 def downvote_answer(answer_id):
     '''downvote answers
     '''
-    cursor = CONNECTION.cursor()
-    sql = 'SELECT * FROM answers WHERE id=%s;'
-    cursor.execute(sql, ([int(answer_id)]))
-    answer = cursor.fetchall()
-    if answer:
-        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
-        cursor.execute(sql, (answer_id, int(current_identity)))
-        voted = cursor.fetchall()
-        if not voted:
-            sql = 'UPDATE answers SET downvotes = downvotes + 1 WHERE id=%s;'
-            cursor.execute(sql, ([answer_id]))
-            CONNECTION.commit()
-            cursor.close()
+    answer = Answers()
+    ans = answer.get_by_answer_id(answer_id)
+    if ans:
+        if not answer.voted():
+            answer.downvote()
             return jsonify({"200":"Voted successfully"})
         return jsonify({'400':'You can only vote once'}), 400
     return abort(404)
@@ -195,26 +150,20 @@ def downvote_answer(answer_id):
 def accept_answer(answer_id):
     '''Mark answer as accepted
     '''
-    cursor = CONNECTION.cursor()
-    sql = 'SELECT * FROM answers WHERE id=%s;'
-    cursor.execute(sql, ([int(answer_id)]))
-    answer = cursor.fetchall()
-    if answer:
-        sql = 'SELECT * FROM questions WHERE id=%s AND question_owner=%s;'
-        cursor.execute(sql, (int(answer[0][6]), int(current_identity)))
-        question = cursor.fetchall()
-        if question:
-            sql = 'SELECT * FROM answers WHERE question_id=%s AND accepted=TRUE'
-            cursor.execute(sql, ([int(answer[0][6])]))
-            accepted = cursor.fetchall()
+    answer = Answers()
+    ans = answer.get_by_answer_id(answer_id)
+    if ans:
+        question = Questions()
+        que = question.get_one(int(ans[0][6]))
+        if que:
+            accepted = answer.accepted(int(ans[0][6]))
             if not accepted:
-                sql = 'UPDATE answers SET accepted = TRUE WHERE id=%s;'
-                cursor.execute(sql, ([answer[0][0]]))
-                CONNECTION.commit()
+                answer.accept(ans[0][0])
                 return jsonify({"200":"Answer Accepted"})
             return jsonify({"400":"You can only accept one answer per question"})
         return jsonify({"401":"Ony the question owner can accept answer"})
     return abort(404)
+
 
 @BP.route('/search', methods=['POST'])
 @jwt_required()
@@ -223,18 +172,15 @@ def search():
     '''
     if request.json and request.json['search']:
         search = request.json['search']
-        cursor = CONNECTION.cursor()
-        sql = 'SELECT * FROM questions WHERE content LIKE %s;'
-        cursor.execute(sql, [search])
-        results = cursor.fetchall()
+        questions = Questions()
+        results = questions.search(search)
         if results:
             res = []
-            sql = 'SELECT * FROM answers WHERE question_id=%s;'
             for question in results:
+                answer = Answers()
                 question = list(question)
                 question[0] = str(question[0])
-                cursor.execute(sql, question[0])
-                answers = cursor.fetchall()
+                answers = answer.get_by_question_id(question[0])
                 display_ans = []
                 for answer in answers:
                     answer = list(answer)
@@ -255,7 +201,6 @@ def search():
                     "answers":display_ans
                 }
                 res.append(retformat)
-                cursor.close()
             return jsonify({"RESULTS":res})
         return jsonify({"404":"No matching results"})
     return jsonify({"400":"Missing parameters"})
