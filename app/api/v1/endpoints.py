@@ -138,8 +138,8 @@ def downvote_answer(answer_id):
     answer = Answers()
     ans = answer.get_by_answer_id(answer_id)
     if ans:
-        if not answer.voted():
-            answer.downvote()
+        if not answer.voted(answer_id, int(current_identity)):
+            answer.downvote(answer_id)
             return jsonify({"200":"Voted successfully"})
         return jsonify({'400':'You can only vote once'}), 400
     return abort(404)

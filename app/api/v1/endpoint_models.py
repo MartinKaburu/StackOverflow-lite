@@ -1,18 +1,31 @@
 '''Create models for the endpoints
 '''
 from flask import abort, jsonify
+from werkzeug.security import generate_password_hash
+
 from app import CONNECTION
 
 class Users():
     '''create objects for users
     '''
-    def __init__(self, username, email, password):
+    def __init__(self):
         '''instantiate user
         '''
-        self.username = username
-        self.email = email
-        self.password = password
         self.cursor = CONNECTION.cursor()
+
+    def get_all(self, email):
+        '''get all users from the db with their emails
+        '''
+        sql = 'SELECT * FROM users WHERE email=%s;'
+        self.cursor.execute(sql, ([email]))
+        return self.cursor.fetchall()
+
+
+    def create_user(self, username, email, password):
+        sql = 'INSERT INTO users(username, email, password) VALUES(%s, %s, %s);'
+        password = generate_password_hash(password)
+        self.cursor.execute(sql, (username, email, password))
+        CONNECTION.commit()
 
 class Questions():
     '''create objects for questions
