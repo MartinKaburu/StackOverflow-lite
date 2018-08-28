@@ -37,10 +37,11 @@ class BaseTest(TestCase):
     def get_token(self):
         '''Create a new jwt for every test
         '''
+        head = {'Content-Type': 'application/json'}
         user = self.test_client().post('/api/v1/auth/signup',\
-        data=json.dumps(self.reg_user), headers={'Content-Type': 'application/json'})
+        data=json.dumps(self.reg_user), headers=head)
         user = self.test_client().post('/api/v1/auth/login',\
-        data=json.dumps(self.login_user), headers={'Content-Type': 'application/json'})
+        data=json.dumps(self.login_user), headers=head)
         self.token = self.split_jwt(user.json)
         return self.token
 
