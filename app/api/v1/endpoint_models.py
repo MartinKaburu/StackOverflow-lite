@@ -8,23 +8,26 @@ from app import CONNECTION
 class Users():
     '''create objects for users
     '''
-    def __init__(self):
+    def __init__(self, email, username=None, password=None):
         '''instantiate user
         '''
         self.cursor = CONNECTION.cursor()
+        self.email = email
+        self.username = username
+        self.password = password
 
-    def get_all(self, email):
+    def get_all(self):
         '''get all users from the db with their emails
         '''
         sql = 'SELECT * FROM users WHERE email=%s;'
-        self.cursor.execute(sql, ([email]))
+        self.cursor.execute(sql, ([self.email]))
         return self.cursor.fetchall()
 
 
-    def create_user(self, username, email, password):
+    def create_user(self):
         sql = 'INSERT INTO users(username, email, password) VALUES(%s, %s, %s);'
-        password = generate_password_hash(password)
-        self.cursor.execute(sql, (username, email, password))
+        self.password = generate_password_hash(self.password)
+        self.cursor.execute(sql, (self.username, self.email, self.password))
         CONNECTION.commit()
 
 class Questions():
@@ -32,17 +35,19 @@ class Questions():
     '''
 
 
-    def __init__(self):
+    def __init__(self, question_owner=None, content=None):
         '''instantiate question
         '''
         self.cursor = CONNECTION.cursor()
+        self.content = content
+        self.question_owner = question_owner
 
 
-    def save(self, content, question_owner):
+    def save(self):
         '''post question to database
         '''
-        sql = 'INSERT INTO questions(content, question_owner) VALUES (%s, %s);'
-        self.cursor.execute(sql, (content, question_owner))
+        sql = 'INSERT INTO questions(question_owner, content) VALUES (%s, %s);'
+        self.cursor.execute(sql, (self.question_owner, self.content))
         CONNECTION.commit()
 
 
@@ -73,11 +78,11 @@ class Questions():
         CONNECTION.commit()
 
 
-    def search(self, content):
+    def search(self):
         '''search for a question by content
         '''
         sql = 'SELECT * FROM questions WHERE content LIKE %s;'
-        self.cursor.execute(sql, ([content]))
+        self.cursor.execute(sql, ([self.content]))
         res = self.cursor.fetchall()
         return res
 
@@ -87,17 +92,21 @@ class Answers():
     '''
 
 
-    def __init__(self):
+    def __init__(self, question_id=None, answer_owner=None, content=None):
         '''instantiate answer
         '''
         self.cursor = CONNECTION.cursor()
+        self.question_id = question_id
+        self.answer_owner = answer_owner
+        self.content = content
 
 
-    def get_by_question_id(self, question_id):
+
+    def get_by_question_id(self):
         '''get answers by a spcific id
         '''
         sql = 'SELECT * FROM answers WHERE question_id=%s;'
-        self.cursor.execute(sql, [question_id])
+        self.cursor.execute(sql, [self.question_id])
         answers = self.cursor.fetchall()
         return answers
 
@@ -111,20 +120,20 @@ class Answers():
         return answers
 
 
-    def add_answer(self, answer_owner, content, question_id):
+    def add_answer(self):
         '''add an answer to the db
         '''
         sql = 'INSERT INTO answers(answer_owner, content, question_id) \
         VALUES (%s, %s, %s);'
-        self.cursor.execute(sql, (answer_owner, content, question_id))
+        self.cursor.execute(sql, (self.answer_owner, self.content, self.question_id))
         CONNECTION.commit()
 
 
-    def accepted(self, question_id):
+    def accepted(self):
         '''check of the question has been accepted
         '''
         sql = 'SELECT * FROM answers WHERE question_id=%s AND accepted=TRUE'
-        self.cursor.execute(sql, ([question_id]))
+        self.cursor.execute(sql, ([self.question_id]))
         accepted = self.cursor.fetchall()
         return accepted
 
@@ -137,11 +146,11 @@ class Answers():
         CONNECTION.commit()
 
 
-    def voted(self, answer_id, voter):
+    def voted(self, answer_id):
         '''find out if user has voted before
         '''
         sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
-        self.cursor.execute(sql, (answer_id, voter))
+        self.cursor.execute(sql, (answer_id, self.answer_owner))
         voted = self.cursor.fetchall()
         return voted
 
@@ -162,16 +171,16 @@ class Answers():
         CONNECTION.commit()
 
 
-    def update_answer(self, answer_id, question_id, update, current_identity):
+    def update_answer(self, answer_id):
         '''update answers with answer_id
         '''
         sql = 'SELECT * FROM answers WHERE id=%s AND question_id=%s;'
-        self.cursor.execute(sql, (answer_id, question_id))
+        self.cursor.execute(sql, (answer_id, self.question_id))
         answer = self.cursor.fetchall()
         if answer:
-            if answer[0][2] == int(current_identity):
+            if answer[0][2] == int(self.answer_owner):
                 sql = 'UPDATE answers SET content = %s WHERE id=%s AND question_id=%s;'
-                self.cursor.execute(sql, (update, answer_id, question_id))
+                self.cursor.execute(sql, (self.content, answer_id, self.question_id))
                 CONNECTION.commit()
                 return jsonify({"201":"answer updated successfully"})
             return jsonify({"401":"Unauthorized, Ony answer ower can update answer"})

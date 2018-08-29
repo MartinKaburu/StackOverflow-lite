@@ -33,9 +33,9 @@ def get_and_post():
     elif request.method == 'POST':
         if request.json and request.json['content']:
             content = request.json['content']
-            answer_owner = int(current_identity)
-            question = Questions()
-            question.save(content, answer_owner)
+            question_owner = int(current_identity)
+            question = Questions(question_owner, content)
+            question.save()
             return jsonify({'201': 'Question added'}), 201
         return abort(400), 400
 
@@ -50,8 +50,8 @@ def get_delete_question(question_id):
         display = []
         question = question.get_one(question_id)
         if question:
-            answers = Answers()
-            answers = answers.get_by_question_id(question_id)
+            answers = Answers(question_id)
+            answers = answers.get_by_question_id()
             display_ans = []
             for answer in answers:
                 answer = list(answer)
@@ -93,10 +93,10 @@ def answer_question(question_id):
     question = question.get_one(question_id)
     if question:
         if request.json and request.json['answer_content']:
-            answer = Answers()
             content = request.json['answer_content']
             answer_owner = int(current_identity)
-            answer.add_answer(answer_owner, content, question_id)
+            answer = Answers(question_id, answer_owner, content)
+            answer.add_answer()
             return jsonify({"201": "question answered"}), 201
         return abort(400), 400
     return abort(404), 404
@@ -109,8 +109,8 @@ def update(question_id, answer_id):
     '''
     if request.json and request.json['content']:
         content = request.json['content']
-        answer = Answers()
-        return answer.update_answer(answer_id, question_id, content, current_identity)
+        answer = Answers(question_id, int(current_identity), content)
+        return answer.update_answer(answer_id)
     return abort(400)
 
 
@@ -119,10 +119,10 @@ def update(question_id, answer_id):
 def upvote_answer(answer_id):
     '''Upvote answers
     '''
-    answer = Answers()
+    answer = Answers(None, int(current_identity))
     ans = answer.get_by_answer_id(answer_id)
     if ans:
-        voted = answer.voted(int(ans[0][0]), int(current_identity))
+        voted = answer.voted(answer_id)
         if not voted:
             answer.upvote(answer_id)
             return jsonify({"200":"Voted successfully"})
@@ -135,10 +135,10 @@ def upvote_answer(answer_id):
 def downvote_answer(answer_id):
     '''downvote answers
     '''
-    answer = Answers()
+    answer = Answers(None, int(current_identity))
     ans = answer.get_by_answer_id(answer_id)
     if ans:
-        if not answer.voted(answer_id, int(current_identity)):
+        if not answer.voted(answer_id):
             answer.downvote(answer_id)
             return jsonify({"200":"Voted successfully"})
         return jsonify({'400':'You can only vote once'}), 400
@@ -153,10 +153,11 @@ def accept_answer(answer_id):
     answer = Answers()
     ans = answer.get_by_answer_id(answer_id)
     if ans:
+        answer = Answers(int(ans[0][6]))
         question = Questions()
         que = question.get_one(int(ans[0][6]))
         if que:
-            accepted = answer.accepted(int(ans[0][6]))
+            accepted = answer.accepted()
             if not accepted:
                 answer.accept(ans[0][0])
                 return jsonify({"200":"Answer Accepted"})
@@ -172,8 +173,8 @@ def search():
     '''
     if request.json and request.json['search']:
         search = request.json['search']
-        questions = Questions()
-        results = questions.search(search)
+        questions = Questions(0,search)
+        results = questions.search()
         if results:
             res = []
             for question in results:

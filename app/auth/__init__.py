@@ -33,11 +33,11 @@ def register_user():
         username = request.json['username']
         email_format = r"(^[a-zA-z0-9_.]+@[a-zA-z0-9-]+\.[a-z]+$)"
         if re.match(email_format, email):
-            user = Users()
-            existing = user.get_all(email)
+            user = Users(email, username, password)
+            existing = user.get_all()
             if existing:
                 return make_response(jsonify({"400":"Email address has an account"})), 400
-            user.create_user(username, email,password)
+            user.create_user()
             return jsonify({"201":"user created successfully"}), 201
         return jsonify({"400":"Invalid email format"}), 400
     return abort(400), 400
@@ -47,8 +47,8 @@ def register_user():
 def api_login(email, password):
     '''Login user
     '''
-    users = Users()
-    user = users.get_all(email)
+    users = Users(email)
+    user = users.get_all()
     try:
         if check_password_hash(user[0][3], password):
             return User(id=user[0][2])
@@ -62,8 +62,8 @@ def identity(payload):
     '''Define current user
     '''
     email = payload['identity']
-    users = Users()
-    user = users.get_all(email)
+    users = Users(email)
+    user = users.get_all()
     return user[0][0]
 
 
