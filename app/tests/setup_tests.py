@@ -8,10 +8,11 @@ from app.instance.models import DatabaseDriver
 class BaseTest(TestCase):
     '''Instantiate tests
     '''
+
+
     def setUp(self):
         """Instantiate the class
         """
-
         self.test = DatabaseDriver()
         self.test.create_all()
         self.app = APP
@@ -27,12 +28,22 @@ class BaseTest(TestCase):
             "email":"martinkaburu.m@gmail.com",
             "password":"kaburu@andela"
         }
+        self.reg_user_wrong = {
+            "username":"martinkaburu",
+            "email":"martinkaburu.mgmail.com",
+            "password":"kaburu@andela"
+        }
         self.login_user = {
             "email":"martinkaburu.m@gmail.com",
             "password":"kaburu@andela"
         }
+        self.login_user_wrong = {
+            "email":"martinkaburu.m@gmail.com",
+            "password":"kaburu@anla"
+        }
 
         self.token = ''
+
 
     def get_token(self):
         '''Create a new jwt for every test
@@ -44,6 +55,7 @@ class BaseTest(TestCase):
         data=json.dumps(self.login_user), headers=head)
         self.token = self.split_jwt(user.json)
         return self.token
+
 
     def split_jwt(self, jwt):
         '''split token from string

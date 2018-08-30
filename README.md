@@ -35,81 +35,21 @@
                 }
 
 # api endpoints::
+        | Method | Endpoint | Public Access | Summary |
+        | --- | --- | --- | --- |
 
-        Get all questions::  
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions
-        methods=['GET']
-        headers["Authorization":"JWT {access_token}"]
-        returns json data of all the questions
-        status_code 200
+        | **GET** | /api/v1/questions | FALSE | Get all questions |
+        | **POST** | /api/v1/questions/{question_id} | FALSE | Post a question |
+        | **POST** | /api/v1/questions | FALSE | Post a question |
+        | **POST** | /api/v1/questions/{question_id}/answers | FALSE | Answer a question |
+        | **DELETE** | /api/v1/questions/{question_id} | FALSE | Delete a specific question |
+        | **POST** | /api/v1/update/{question_id}/{answer_id} | FALSE | Update an answer |
+        | **POST** | /api/v1/upvote/{answer_id} | FALSE | Upvote an answer |
+        | **POST** | /api/v1/downvote/{answer_id} | FALSE | downvote an answer |
+        | **POST** | /api/v1/accept/{answer_id} | FALSE | accept an answer |
+        | **POST** | /api/v1/search | FALSE | search for a question |
 
-        Get specific question::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions/{int:question_id}
-        methods=['GET']
-        headers["Authorization":"JWT {access_token}"]
-        returns json data on the question specified
-        status_code 200
-
-        Add a question::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions
-        methods=['POST']
-        headers['Content_Type':'application/json', "Authorization":"JWT {access_token}"]
-        body['content':'the question']
-        returns json data on the added question status_code 201
-        or
-        returns 400 incase 'content' or 'owner' keys were not specified in the json or the data is not in json format
-
-        Answer a question::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions/{int:question_id}/answers
-        methods=['POST']
-        headers['Content_Type':'application/json', "Authorization":"JWT {access_token}"]
-        body['answer_content':'the answer']
-        returns json data on the answered question status_code 201
-        or
-        returns 400 incase 'answer_content' key is not specified in the json or the data type is not json
-
-        Delete a question::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/questions/{int:question_id}
-        methods=['DELETE']
-        headers['Content_Type':'application/json', "Authorization":"JWT {access_token}"]
-        returns 200 : "Question deleted", or 404, or 400 if the user is unauthorized
-
-        Update answer::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/update/{question_id}/{answer_id}
-        methods=['POST']
-        headers["Authorization":"JWT {access_token}", "Content-Type":"application/json"]
-        body = {
-                "content":"answer update"
-               }
-        returns 201 if successfull, 404 if invaid answer, 401 in unauthorized
-
-        upvote answer::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/upvote/1
-        methods=['POST']
-        headers["Authorization":"JWT {access_token}"]
-        returns 200 if successfull, 404 if invalid answer, 401 if unauthorized access
-
-        downvote answer::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/downvote/1
-        methods=['POST']
-        headers["Authorization":"JWT {access_token}"]
-        returns 200 if successfull, 404 if invalid answer, 401 if unauthorized access
-
-        Accept answer::
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/accept/{answer_id}
-        methods=['POST']
-        headers["Authorization":"JWT {access_token}"]
-        returns 201 when accepted, 404 invalid answer, 400 already voted, 401 unauthorized
-
-        Search questions:
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/search
-        methods=["POST"]
-        headers["Authorization":"JWT {access_token}"]
-        body = {
-            "search":"key words"
-        }
-        returns 200 and questions found, 404 if no questions found
-# errors:
+# status codes:
     400 bad request
     404 resource not found
     201 created
