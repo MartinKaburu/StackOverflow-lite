@@ -58,6 +58,8 @@
 
     $> gunicorn app:APP
 
+# Endpoints
+
   | Method | Endpoint | Public Access | Summary |
   | --- | --- | --- | --- |
   | **POST** | /api/v1/auth/login | TRUE | login a user |
