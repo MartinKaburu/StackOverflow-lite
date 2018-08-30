@@ -10,7 +10,11 @@
 
 # heroku hosting
 
-        https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/auth/signup
+        https://kaburu-stackoverflowlite-cp3.herokuapp.com
+
+# Documentation
+
+        https://stackdoc.docs.apiary.io/
 
 # clone repository
 
