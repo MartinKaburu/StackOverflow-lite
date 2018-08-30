@@ -12,40 +12,47 @@
 
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/auth/signup
 
-#clone repository
-  git clone https://github.com/MartinKaburu/stackoverflow-lite.git
+# clone repository
 
-#setup runtime environment for the app:
-  $> pip install virtualenv
-  $> virtualenv venv
-  $> source venv/bin/activate
-  $> pip install -r requirements.txt
+    git clone https://github.com/MartinKaburu/stackoverflow-lite.git
 
-#setup configurations for tests:
-  export CONTEXT= TEST
-  export DATABASE_NAME= {YOUR_TEST_DB_NAME}
-  export DATABASE_HOST= localhost
-  export DATABASE_PASSWORD= {YOUR_TEST_DB_PASSWORD}
-  export DATABASE_USER= {YOUR_DB_USER}
+# setup runtime environment for the app:
 
-#run tests:
-  $> pip install pytest
-  $> pytest app
+    $> pip install virtualenv
+    $> virtualenv venv
+    $> source venv/bin/activate
+    $> pip install -r requirements.txt
 
-#setup configurations for running the app:
-  export CONTEXT= DEV
-  export DATABASE_NAME= {YOUR_OTHER_DB_NAME}
-  export DATABASE_HOST= localhost
-  export DATABASE_PASSWORD= {YOUR_OTHER_DB_PASSWORD}
-  export DATABASE_USER= {YOUR_DB_USER}
-  export FLASK_APP=app
-  export FLASK_ENV=development
+# setup configurations for tests:
 
-#run the app with flask:
-  flask run
+        export CONTEXT= TEST
+        export DATABASE_NAME= {YOUR_TEST_DB_NAME}
+        export DATABASE_HOST= localhost
+        export DATABASE_PASSWORD= {YOUR_TEST_DB_PASSWORD}
+        export DATABASE_USER= {YOUR_DB_USER}
 
-#run the app with gunicorn:
-  gunicorn app:APP
+# run tests:
+
+    $> pip install pytest
+    $> pytest app
+
+# setup configurations for running the app:
+
+    $> export CONTEXT= DEV
+    $> export DATABASE_NAME= {YOUR_OTHER_DB_NAME}
+    $> export DATABASE_HOST= localhost
+    $> export DATABASE_PASSWORD= {YOUR_OTHER_DB_PASSWORD}
+    $> export DATABASE_USER= {YOUR_DB_USER}
+    $> export FLASK_APP=app
+    $> export FLASK_ENV=development
+
+# run the app with flask:
+
+    $> flask run
+
+# run the app with gunicorn:
+
+    $> gunicorn app:APP
 
   | Method | Endpoint | Public Access | Summary |
   | --- | --- | --- | --- |
