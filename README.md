@@ -12,13 +12,40 @@
 
         https://kaburu-stackoverflowlite-cp3.herokuapp.com/api/v1/auth/signup
 
-# USAGE:
-  1. Clone the repo
-  2. Setup a virtualenvironment for the app
-  3. Install all the dependancies from the requirements.txt
-  4. Setup all the database configurations as environment variables in a .env file
-  5. set the app CONTEXT variable as either TEST or DEV
-  6. Run and smile 
+#clone repository
+  git clone https://github.com/MartinKaburu/stackoverflow-lite.git
+
+#setup runtime environment for the app:
+  $> pip install virtualenv
+  $> virtualenv venv
+  $> source venv/bin/activate
+  $> pip install -r requirements.txt
+
+#setup configurations for tests:
+  export CONTEXT= TEST
+  export DATABASE_NAME= {YOUR_TEST_DB_NAME}
+  export DATABASE_HOST= localhost
+  export DATABASE_PASSWORD= {YOUR_TEST_DB_PASSWORD}
+  export DATABASE_USER= {YOUR_DB_USER}
+
+#run tests:
+  $> pip install pytest
+  $> pytest app
+
+#setup configurations for running the app:
+  export CONTEXT= DEV
+  export DATABASE_NAME= {YOUR_OTHER_DB_NAME}
+  export DATABASE_HOST= localhost
+  export DATABASE_PASSWORD= {YOUR_OTHER_DB_PASSWORD}
+  export DATABASE_USER= {YOUR_DB_USER}
+  export FLASK_APP=app
+  export FLASK_ENV=development
+
+#run the app with flask:
+  flask run
+
+#run the app with gunicorn:
+  gunicorn app:APP
 
   | Method | Endpoint | Public Access | Summary |
   | --- | --- | --- | --- |
