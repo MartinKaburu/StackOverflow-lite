@@ -26,8 +26,6 @@ CORS(APP, resources=r'/api/*')
 from .api.v1 import endpoints
 from .auth import api_login, register_user, identity
 
-import views 
-
 APP.register_blueprint(endpoints.BP)
 
 

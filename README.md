@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/MartinKaburu/StackOverflow-lite.svg?branch=development)](https://travis-ci.org/MartinKaburu/StackOverflow-lite)
 [![codecov](https://codecov.io/gh/MartinKaburu/StackOverflow-lite/branch/development/graph/badge.svg)](https://codecov.io/gh/MartinKaburu/StackOverflow-lite)
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/6a89cd9ab95f70bbddda)
+[![Website naereen.github.io](https://img.shields.io/website-up-down-green-red/https/naereen.github.io.svg)](https://martinkaburu.github.io/stackoverflow-lite-GUI/index.html)
 
 # github pages
 
