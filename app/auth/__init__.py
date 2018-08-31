@@ -33,13 +33,21 @@ def register_user():
         username = request.json['username']
         email_format = r"(^[a-zA-z0-9_.]+@[a-zA-z0-9-]+\.[a-z]+$)"
         if re.match(email_format, email):
-            user = Users(email, username, password)
-            existing = user.get_all()
-            if existing:
-                return make_response(jsonify({"400":"Email address has an account"})), 400
-            user.create_user()
-            return jsonify({"201":"user created successfully"}), 201
-        return jsonify({"400":"Invalid email format"}), 400
+            username_format = r"(^[a-zA-z0-9_.]*$)"
+            if re.match(username_format, username):
+                cursor = CONNECTION.cursor()
+                sql = 'SELECT * FROM users WHERE email=%s;'
+                cursor.execute(sql, ([email]))
+                existing = cursor.fetchall()
+                if not existing:
+                    sql = 'INSERT INTO users(username, email, password) VALUES(%s, %s, %s);'
+                    password = generate_password_hash(password)
+                    cursor.execute(sql, (username, email, password))
+                    CONNECTION.commit()
+                    return jsonify({"message":"user created successfully"}), 201
+                return make_response(jsonify({"message":"Email address has an account"})), 400
+            return jsonify({"message":"Username should contain only alphanumeical values"}), 400
+        return jsonify({"message":"Invalid email format"}), 400
     return abort(400), 400
 
 

@@ -11,7 +11,7 @@ class Development(object):
     DATABASE_HOST = os.environ.get('DATABASE_HOST')
     DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
     DATABASE_USER = os.environ.get('DATABASE_USER')
-    JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
+    JWT_EXPIRATION_DELTA = timedelta(seconds=3600)
     TRACK_MODIFICATIONS = True
     debug = True
 
@@ -27,4 +27,4 @@ class Test(object):
     DATABASE_USER = os.environ.get('DATABASE_USER')
     TRACK_MODIFICATIONS = True
     debug = True
-    JWT_EXPIRATION_DELTA = timedelta(seconds=1800)
+    JWT_EXPIRATION_DELTA = timedelta(seconds=3600)

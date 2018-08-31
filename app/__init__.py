@@ -13,6 +13,7 @@ if os.getenv('CONTEXT') == 'TEST':
     APP.config.from_object(Test)
 elif os.getenv('CONTEXT') == 'DEV':
     APP.config.from_object(Development)
+    APP.url_map.strict_slashes = False
 
 CONNECTION = psycopg.connect(\
     dbname=APP.config['DATABASE_NAME'], \

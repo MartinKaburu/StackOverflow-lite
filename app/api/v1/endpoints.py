@@ -1,5 +1,7 @@
 '''api endpoints
 '''
+from re import match
+
 from flask import jsonify, Blueprint, abort, request
 from flask_jwt import jwt_required, current_identity
 from flask_cors import CORS
@@ -10,7 +12,8 @@ from app.api.v1.endpoint_models import Users, Questions, Answers
 
 BP = Blueprint('api', __name__, url_prefix='/api/v1')
 CORS(BP)
-
+#BP.url_map.strict_slashes = False
+input_format = r"(^[0-9_?!@#$%^&*/|\\]*$)"
 
 @BP.route('/questions', methods=['GET', 'POST'])
 @jwt_required()
@@ -36,7 +39,7 @@ def get_and_post():
             question_owner = int(current_identity)
             question = Questions(question_owner, content)
             question.save()
-            return jsonify({'201': 'Question added'}), 201
+            return jsonify({'message': 'Question added'}), 201
         return abort(400), 400
 
 
@@ -79,8 +82,8 @@ def get_delete_question(question_id):
     if que:
         if int(current_identity) is que[0][2]:
             question.delete_question(question_id)
-            return jsonify({'Question deleted':'200'}), 200
-        return jsonify({"401":"Unauthorized: Only question owner can remove question"})
+            return jsonify({'message':'Question deleted'}), 200
+        return jsonify({"message":"Unauthorized: Only question owner can remove question"})
     return abort(404), 404
 
 
@@ -97,21 +100,48 @@ def answer_question(question_id):
             answer_owner = int(current_identity)
             answer = Answers(question_id, answer_owner, content)
             answer.add_answer()
-            return jsonify({"201": "question answered"}), 201
+            return jsonify({"message": "question answered"}), 201
         return abort(400), 400
     return abort(404), 404
 
 
-@BP.route('/update/<int:question_id>/<int:answer_id>', methods=['PUT'])
+@BP.route('/questions/<int:question_id>/answers/<int:answer_id>', methods=['PUT', 'POST', 'DELETE'])
 @jwt_required()
-def update(question_id, answer_id):
+def update_delete_accept(question_id, answer_id):
     ''' update an answer
     '''
-    if request.json and request.json['content']:
-        content = request.json['content']
-        answer = Answers(question_id, int(current_identity), content)
-        return answer.update_answer(answer_id)
-    return abort(400)
+    if request.method == 'PUT':
+        if request.json and request.json['content']:
+            content = request.json['content']
+            answer = Answers(question_id, int(current_identity), content)
+            return answer.update_answer(answer_id)
+        return abort(400)
+    elif request.method == 'POST':
+        answer = Answers()
+        ans = answer.get_by_answer_id(answer_id)
+        if ans:
+            answer = Answers(int(ans[0][6]))
+            question = Questions(int(current_identity))
+            que = question.get_by_both(question_id)
+            if que:
+                accepted = answer.accepted()
+                if not accepted:
+                    answer.accept(ans[0][0])
+                    return jsonify({"message":"Answer Accepted"}), 200
+                return jsonify({"message":"You can only accept one answer per question"}), 400
+            return jsonify({"message":"Ony the question owner can accept answer"}), 401
+        return abort(404)
+    else:
+        answer = Answers(question_id)
+        exists = answer.exists(question_id, answer_id)
+        if exists:
+            ans = answer.get_by_both(int(current_identity), answer_id)
+            if ans:
+                answer.delete(answer_id)
+                return jsonify({"message":"Answer deleted successfully"})
+            return jsonify({"message":"Only answer owner can delete answer"})
+        return abort(404)
+
 
 
 @BP.route('/upvote/<int:answer_id>', methods=['POST'])
@@ -119,15 +149,16 @@ def update(question_id, answer_id):
 def upvote_answer(answer_id):
     '''Upvote answers
     '''
-    answer = Answers(None, int(current_identity))
+    answer = Answers()
     ans = answer.get_by_answer_id(answer_id)
     if ans:
-        voted = answer.voted(answer_id)
-        if not voted:
-            answer.upvote(answer_id)
-            return jsonify({"200":"Voted successfully"})
-        return jsonify({'400':'You can only vote once'}), 400
+        upvoted = answer.upvoted(answer_id, int(current_identity))
+        if not upvoted:
+            answer.upvote(answer_id, int(current_identity))
+            return(jsonify({"message":"Voted successfully"}))
+        return jsonify({"message":"You already voted"})
     return abort(404)
+
 
 
 @BP.route('/downvote/<int:answer_id>', methods=['POST'])
@@ -138,31 +169,10 @@ def downvote_answer(answer_id):
     answer = Answers(None, int(current_identity))
     ans = answer.get_by_answer_id(answer_id)
     if ans:
-        if not answer.voted(answer_id):
-            answer.downvote(answer_id)
-            return jsonify({"200":"Voted successfully"})
-        return jsonify({'400':'You can only vote once'}), 400
-    return abort(404)
-
-
-@BP.route('/accept/<int:answer_id>', methods=['POST'])
-@jwt_required()
-def accept_answer(answer_id):
-    '''Mark answer as accepted
-    '''
-    answer = Answers()
-    ans = answer.get_by_answer_id(answer_id)
-    if ans:
-        answer = Answers(int(ans[0][6]))
-        question = Questions()
-        que = question.get_one(int(ans[0][6]))
-        if que:
-            accepted = answer.accepted()
-            if not accepted:
-                answer.accept(ans[0][0])
-                return jsonify({"200":"Answer Accepted"})
-            return jsonify({"400":"You can only accept one answer per question"})
-        return jsonify({"401":"Ony the question owner can accept answer"})
+        if not answer.downvoted(answer_id, int(current_identity)):
+            answer.downvote(answer_id, int(current_identity))
+            return jsonify({"message":"Voted successfully"}), 200
+        return jsonify({'message':'You can only vote once'}), 400
     return abort(404)
 
 
@@ -203,5 +213,25 @@ def search():
                 }
                 res.append(retformat)
             return jsonify({"RESULTS":res})
-        return jsonify({"404":"No matching results"})
-    return jsonify({"400":"Missing parameters"})
+        return jsonify({"message":"No matching results"}), 200
+    return jsonify({"message":"Missing parameters"}), 400
+
+
+@BP.route('/questions/user', methods=['GET'])
+@jwt_required()
+def get_mine():
+    '''get questions for the current user
+    '''
+    que = Questions(int(current_identity))
+    questions = que.get_by_owner()
+    display = []
+    if questions:
+        for question in questions:
+            retformat = {
+                "question_id":question[0],
+                "content":question[1],
+                "owner_id":question[2]
+            }
+            display.append(retformat)
+        return jsonify({"QUESTIONS":display}), 200
+    return jsonify({"message":"Current user has no questions"}), 200

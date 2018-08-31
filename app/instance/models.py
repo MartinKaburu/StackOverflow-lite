@@ -34,8 +34,10 @@ class DatabaseDriver(object):
         );'
 
         votes = 'CREATE TABLE IF NOT EXISTS votes(\
-        id SERIAL REFERENCES answers(id),\
-        voter INT NOT NULL REFERENCES users(id) \
+        id SERIAL,\
+        voter INT NOT NULL REFERENCES users(id), \
+        upvote BOOLEAN DEFAULT FALSE,\
+        downvote BOOLEAN DEFAULT FALSE\
         );'
         cursor = CONNECTION.cursor()
         cursor.execute(users)

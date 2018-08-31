@@ -77,6 +77,11 @@ class Questions():
         self.cursor.execute(sql, ([question_id]))
         CONNECTION.commit()
 
+    def get_by_owner(self):
+        sql = 'SELECT * FROM questions WHERE question_owner=%s;'
+        self.cursor.execute(sql, ([self.question_owner]))
+        ans = self.cursor.fetchall()
+        return ans
 
     def search(self):
         '''search for a question by content
@@ -85,6 +90,12 @@ class Questions():
         self.cursor.execute(sql, ([self.content]))
         res = self.cursor.fetchall()
         return res
+
+    def get_by_both(self, question_id):
+        sql = 'SELECT * FROM questions WHERE question_owner=%s AND id=%s;'
+        self.cursor.execute(sql, (self.question_owner, question_id))
+        ans = self.cursor.fetchall()
+        return ans
 
 
 class Answers():
@@ -146,28 +157,58 @@ class Answers():
         CONNECTION.commit()
 
 
-    def voted(self, answer_id):
+    def upvoted(self, answer_id, current_identity):
         '''find out if user has voted before
         '''
-        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s;'
-        self.cursor.execute(sql, (answer_id, self.answer_owner))
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s AND upvote=TRUE;'
+        self.cursor.execute(sql, (answer_id, current_identity))
+        voted = self.cursor.fetchall()
+        return voted
+
+    def downvoted(self, answer_id, current_identity):
+        '''find out if user has voted before
+        '''
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s AND downvote=TRUE;'
+        self.cursor.execute(sql, (answer_id, current_identity))
         voted = self.cursor.fetchall()
         return voted
 
 
-    def upvote(self, answer_id):
+    def upvote(self, answer_id, current_identity):
         '''cast an upvote
         '''
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s AND downvote=TRUE;'
+        self.cursor.execute(sql, (answer_id, current_identity))
+        vote = self.cursor.fetchall()
+        if vote:
+            sql = 'UPDATE answers SET downvotes = downvotes-1 WHERE id=%s;'
+            self.cursor.execute(sql, ([answer_id]))
+            sql = 'UPDATE votes SET downvote=FALSE WHERE id=%s AND voter=%s;'
+            self.cursor.execute(sql, (answer_id, current_identity))
+            CONNECTION.commit()
         sql = 'UPDATE answers SET upvotes = upvotes + 1 WHERE id=%s;'
         self.cursor.execute(sql, ([answer_id]))
+        sql = 'INSERT INTO votes(upvote, id, voter) VALUES(TRUE, %s, %s);'
+        self.cursor.execute(sql, (answer_id, current_identity))
         CONNECTION.commit()
 
 
-    def downvote(self, answer_id):
+    def downvote(self, answer_id, current_identity):
         '''cast a downvote
         '''
-        sql = 'UPDATE answers SET upvotes = downvotes + 1 WHERE id=%s;'
+        sql = 'SELECT * FROM votes WHERE id=%s AND voter=%s AND upvote=TRUE;'
+        self.cursor.execute(sql, (answer_id, current_identity))
+        vote = self.cursor.fetchall()
+        if vote:
+            sql = 'UPDATE answers SET upvotes = upvotes-1 WHERE id=%s;'
+            self.cursor.execute(sql, ([answer_id]))
+            sql = 'UPDATE votes SET upvote=FALSE WHERE id=%s AND voter=%s;'
+            self.cursor.execute(sql, (answer_id, current_identity))
+            CONNECTION.commit()
+        sql = 'UPDATE answers SET downvotes = downvotes + 1 WHERE id=%s;'
         self.cursor.execute(sql, ([answer_id]))
+        sql = 'INSERT INTO votes(downvote, id, voter) VALUES(TRUE, %s, %s);'
+        self.cursor.execute(sql, (answer_id, current_identity))
         CONNECTION.commit()
 
 
@@ -182,6 +223,33 @@ class Answers():
                 sql = 'UPDATE answers SET content = %s WHERE id=%s AND question_id=%s;'
                 self.cursor.execute(sql, (self.content, answer_id, self.question_id))
                 CONNECTION.commit()
-                return jsonify({"201":"answer updated successfully"})
-            return jsonify({"401":"Unauthorized, Ony answer ower can update answer"})
+                return jsonify({"message":"answer updated successfully"}), 201
+            return jsonify({"message":"Unauthorized, Ony answer ower can update answer"}), 401
         return abort(404)
+
+
+    def get_by_owner(self, owner):
+        sql = 'SELECT * FROM answers WHERE answer_owner=%s;'
+        self.cursor.execute(sql, ([owner]))
+        ans = self.cursor.fetchall()
+        return ans
+
+
+    def get_by_both(self, owner, question_id):
+        sql = 'SELECT * FROM answers WHERE answer_owner=%s AND question_id=%s;'
+        self.cursor.execute(sql, (owner, question_id))
+        ans = self.cursor.fetchall()
+        return ans
+
+
+    def delete(self, answer_id):
+        sql = 'DELETE FROM answers WHERE id=%s;'
+        self.cursor.execute(sql, ([answer_id]))
+        CONNECTION.commit()
+
+
+    def exists(self, question_id, answer_id):
+        sql = 'SELECT * FROM answers WHERE question_id=%s AND id=%s;'
+        self.cursor.execute(sql, (question_id, answer_id))
+        ans = self.cursor.fetchall()
+        return ans
