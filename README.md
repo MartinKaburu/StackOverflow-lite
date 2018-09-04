@@ -76,3 +76,4 @@
   | **POST** | /api/v1/search | FALSE | search for a question |
   | **DELETE** | /api/v1/questions/{question_id}/answers/{answer_id} | FALSE | Delete an answer |
   | **GET** | /api/v1/questions/user | FALSE | get the current users questions |
+  | **GET** | /api/v1/questions/{question_id} | FALSE | get a specific question |
