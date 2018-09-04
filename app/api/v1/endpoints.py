@@ -188,10 +188,10 @@ def search():
         if results:
             res = []
             for question in results:
-                answer = Answers()
+                answer = Answers(question[0])
                 question = list(question)
                 question[0] = str(question[0])
-                answers = answer.get_by_question_id(question[0])
+                answers = answer.get_by_question_id()
                 display_ans = []
                 for answer in answers:
                     answer = list(answer)

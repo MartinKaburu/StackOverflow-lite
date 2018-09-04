@@ -22,6 +22,8 @@ question_id INT NOT NULL REFERENCES questions(id)
 );
 
 CREATE TABLE IF NOT EXISTS votes(
-id SERIAL REFERENCES answers(id),
-voter INT NOT NULL REFERENCES users(id)
+id SERIAL,
+voter INT NOT NULL REFERENCES users(id),
+upvote BOOLEAN DEFAULT FALSE,
+downvote BOOLEAN DEFAULT FALSE
 );
