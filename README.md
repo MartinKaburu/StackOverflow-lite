@@ -7,7 +7,7 @@
 
 # github pages
 
-        https://martinkaburu.github.io/StackOverflow-lite/index.html
+        https://martinkaburu.github.io/stackoverflow-lite-GUI/index.html
 
 # heroku hosting
 
