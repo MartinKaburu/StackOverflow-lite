@@ -17,13 +17,13 @@ class BaseConfig(object):
     TRACK_MODIFICATIONS = True
     debug = True
 
-class Development(object):
+class Development(BaseConfig):
     '''Development database
     '''
     DATABASE_NAME = os.environ.get('DATABASE_NAME')
 
 
-class Test(object):
+class Test(BaseConfig):
     '''Test database
     '''
     DATABASE_NAME = os.environ.get('DATABASE_NAME')
