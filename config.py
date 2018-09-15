@@ -26,4 +26,4 @@ class Development(object):
 class Test(object):
     '''Test database
     '''
-    DATABASE_NAME = 'stackoverflow_test'
+    DATABASE_NAME = os.environ.get('DATABASE_NAME')
