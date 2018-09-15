@@ -39,4 +39,4 @@ class TestTokens(BaseTest):
         questions = self.test_client().get('/api/v1/questions', \
         headers={'Authorization': 'JWT {}'.format(jwt)})
 
-        self.assertIn('"QUESTIONS"', questions.data)
+        self.assertIn('"No questions posted yet"', questions.data)
