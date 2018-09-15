@@ -23,16 +23,20 @@ def get_and_post():
     '''
     if request.method == 'GET':
         questions = Questions()
-        questions = questions.get_all()
+        questionz = questions.get_all()
         display = []
-        for question in questions:
-            retformat = {
-                "question_id":question[0],
-                "content":question[1],
-                "owner_id":question[2]
-            }
-            display.append(retformat)
-        return jsonify({"QUESTIONS":display}), 200
+        if questionz:
+            for question in questionz:
+                retformat = {
+                    "question_id":question[0],
+                    "content":question[1],
+                    "owner_id":question[2],
+                    "username": questions.get_username(question[2]),
+                    "posted_on": question[3].strftime('%B %d, %Y')
+                }
+                display.append(retformat)
+            return jsonify({"QUESTIONS":display}), 200
+        return jsonify({"message":"No questions posted yet"}), 404
     elif request.method == 'POST':
         if request.json and request.json['content']:
             content = request.json['content']
@@ -50,13 +54,12 @@ def get_delete_question(question_id):
     '''
     question = Questions()
     if request.method == 'GET':
-        display = []
         question = question.get_one(question_id)
         if question:
             answers = Answers(question_id)
-            answers = answers.get_by_question_id()
+            answerz = answers.get_by_question_id()
             display_ans = []
-            for answer in answers:
+            for answer in answerz:
                 answer = list(answer)
                 retformat = {
                     "answer_id":answer[0],
@@ -66,16 +69,18 @@ def get_delete_question(question_id):
                     "downvotes":answer[4],
                     "accepted":answer[5],
                     "question_id":answer[6],
+                    "username": answers.get_username(answer[2]),
+                    "posted_on": answer[7].strftime('%B %d, %Y')
                 }
                 display_ans.append(retformat)
-            display = [
-                {
+            display = {
                     "question_id": question[0][0],
                     "content": question[0][1],
                     "question_owner": question[0][2],
-                    "answers": display_ans
+                    "answers": display_ans,
+                    "username": answers.get_username(question[0][2]),
+                    "posted_on": question[0][3].strftime('%B %d, %Y')
                 }
-            ]
             return jsonify(display), 200
         return abort(404), 404
     que = question.get_one(question_id)
@@ -83,7 +88,7 @@ def get_delete_question(question_id):
         if int(current_identity) is que[0][2]:
             question.delete_question(question_id)
             return jsonify({'message':'Question deleted'}), 200
-        return jsonify({"message":"Unauthorized: Only question owner can remove question"})
+        return jsonify({"message":"Unauthorized: Only question owner can remove question"}), 401
     return abort(404), 404
 
 
@@ -138,8 +143,8 @@ def update_delete_accept(question_id, answer_id):
             ans = answer.get_by_both(int(current_identity), answer_id)
             if ans:
                 answer.delete(answer_id)
-                return jsonify({"message":"Answer deleted successfully"})
-            return jsonify({"message":"Only answer owner can delete answer"})
+                return jsonify({"message":"Answer deleted successfully"}), 200
+            return jsonify({"message":"Only answer owner can delete answer"}), 400
         return abort(404)
 
 
@@ -155,8 +160,8 @@ def upvote_answer(answer_id):
         upvoted = answer.upvoted(answer_id, int(current_identity))
         if not upvoted:
             answer.upvote(answer_id, int(current_identity))
-            return(jsonify({"message":"Voted successfully"}))
-        return jsonify({"message":"You already voted"})
+            return(jsonify({"message":"Voted successfully"})), 200
+        return jsonify({"message":"You already voted"}), 400
     return abort(404)
 
 
@@ -188,12 +193,12 @@ def search():
         if results:
             res = []
             for question in results:
-                answer = Answers(question[0])
+                answers = Answers(question[0])
                 question = list(question)
                 question[0] = str(question[0])
-                answers = answer.get_by_question_id()
+                answerz = answers.get_by_question_id()
                 display_ans = []
-                for answer in answers:
+                for answer in answerz:
                     answer = list(answer)
                     retans = {
                         "answer_id":answer[0],
@@ -202,14 +207,18 @@ def search():
                         "upvotes":answer[3],
                         "downvotes":answer[4],
                         "accepted":answer[5],
-                        "question_id":answer[6]
+                        "question_id":answer[6],
+                        "username": answers.get_username(answer[2]),
+                        "posted_on": answer[7].strftime('%B %d, %Y')
                     }
                     display_ans.append(retans)
                 retformat = {
                     "id":question[0],
                     "content":question[1],
                     "owner_id":question[2],
-                    "answers":display_ans
+                    "answers":display_ans,
+                    "username": answers.get_username(question[0][2]),
+                    "posted_on": question[0][3].strftime('%B %d, %Y')
                 }
                 res.append(retformat)
             return jsonify({"RESULTS":res})
@@ -230,8 +239,10 @@ def get_mine():
             retformat = {
                 "question_id":question[0],
                 "content":question[1],
-                "owner_id":question[2]
+                "owner_id":question[2],
+                "username": que.get_username(question[2]),
+                "posted_on": question[3].strftime('%B %d, %Y')
             }
             display.append(retformat)
         return jsonify({"QUESTIONS":display}), 200
-    return jsonify({"message":"Current user has no questions"}), 200
+    return jsonify({"message":"Current user has no questions"}), 404

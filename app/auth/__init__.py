@@ -1,6 +1,7 @@
 '''JWT and user authentication module
 '''
 import re
+from datetime import datetime as dt
 
 from flask import request, jsonify, make_response, abort
 from werkzeug.security import  generate_password_hash, check_password_hash
@@ -32,6 +33,7 @@ def register_user():
         password = request.json['password']
         username = request.json['username']
         email_format = r"(^[a-zA-z0-9_.]+@[a-zA-z0-9-]+\.[a-z]+$)"
+        date = dt.now()
         if re.match(email_format, email):
             username_format = r"(^[a-zA-z0-9_.]*$)"
             if re.match(username_format, username):
@@ -40,15 +42,16 @@ def register_user():
                 cursor.execute(sql, ([email]))
                 existing = cursor.fetchall()
                 if not existing:
-                    sql = 'INSERT INTO users(username, email, password) VALUES(%s, %s, %s);'
+                    sql = 'INSERT INTO users(username, email, password, created_on) VALUES(%s, %s, %s, %s);'
                     password = generate_password_hash(password)
-                    cursor.execute(sql, (username, email, password))
+                    cursor.execute(sql, (username, email, password, date))
                     CONNECTION.commit()
                     return jsonify({"message":"user created successfully"}), 201
                 return make_response(jsonify({"message":"Email address has an account"})), 400
             return jsonify({"message":"Username should contain only alphanumeical values"}), 400
         return jsonify({"message":"Invalid email format"}), 400
     return abort(400), 400
+
 
 
 @jwt.authentication_handler

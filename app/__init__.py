@@ -33,17 +33,24 @@ APP.register_blueprint(endpoints.BP)
 def not_found(error):
     '''jsonify 404
     '''
-    return make_response(jsonify({'error': 'Not found'}), 404)
+    return make_response(jsonify({'message': 'Not found'}), 404)
 
 
 @APP.errorhandler(400)
 def bad_request(error):
     ''' jsonify 400
     '''
-    return make_response(jsonify({'error': 'Bad Request'}), 400)
+    return make_response(jsonify({'message': 'Bad Request'}), 400)
 
 @APP.errorhandler(405)
 def method_not_allowed(error):
     '''error handler for Bad request
     '''
-    return make_response(jsonify({'error':'Method Not Allowed'}), 405)
+    return make_response(jsonify({'message':'Method Not Allowed'}), 405)
+
+
+@APP.errorhandler(500)
+def method_not_allowed(error):
+    '''error handler for Bad request
+    '''
+    return make_response(jsonify({'message':'Server down'}), 500)

@@ -1,5 +1,7 @@
 '''Create models for the endpoints
 '''
+from datetime import datetime as dt
+
 from flask import abort, jsonify
 from werkzeug.security import generate_password_hash
 
@@ -25,9 +27,10 @@ class Users():
 
 
     def create_user(self):
-        sql = 'INSERT INTO users(username, email, password) VALUES(%s, %s, %s);'
+        date = dt.now()
+        sql = 'INSERT INTO users(username, email, password, created_on) VALUES(%s, %s, %s, %s);'
         self.password = generate_password_hash(self.password)
-        self.cursor.execute(sql, (self.username, self.email, self.password))
+        self.cursor.execute(sql, (self.username, self.email, self.password, date))
         CONNECTION.commit()
 
 class Questions():
@@ -38,6 +41,7 @@ class Questions():
     def __init__(self, question_owner=None, content=None):
         '''instantiate question
         '''
+        self.date = dt.now()
         self.cursor = CONNECTION.cursor()
         self.content = content
         self.question_owner = question_owner
@@ -46,8 +50,8 @@ class Questions():
     def save(self):
         '''post question to database
         '''
-        sql = 'INSERT INTO questions(question_owner, content) VALUES (%s, %s);'
-        self.cursor.execute(sql, (self.question_owner, self.content))
+        sql = 'INSERT INTO questions(question_owner, content, posted_on) VALUES (%s, %s, %s);'
+        self.cursor.execute(sql, (self.question_owner, self.content, self.date))
         CONNECTION.commit()
 
 
@@ -97,6 +101,12 @@ class Questions():
         ans = self.cursor.fetchall()
         return ans
 
+    def get_username(self, id):
+        sql = 'SELECT * FROM users WHERE id=%s;'
+        self.cursor.execute(sql, ([id]))
+        user = self.cursor.fetchone()
+        return user[1]
+
 
 class Answers():
     '''create object for answers
@@ -110,6 +120,7 @@ class Answers():
         self.question_id = question_id
         self.answer_owner = answer_owner
         self.content = content
+        self.date = dt.now()
 
 
 
@@ -134,9 +145,9 @@ class Answers():
     def add_answer(self):
         '''add an answer to the db
         '''
-        sql = 'INSERT INTO answers(answer_owner, content, question_id) \
-        VALUES (%s, %s, %s);'
-        self.cursor.execute(sql, (self.answer_owner, self.content, self.question_id))
+        sql = 'INSERT INTO answers(answer_owner, content, question_id, posted_on) \
+        VALUES (%s, %s, %s, %s);'
+        self.cursor.execute(sql, (self.answer_owner, self.content, self.question_id, self.date))
         CONNECTION.commit()
 
 
@@ -253,3 +264,9 @@ class Answers():
         self.cursor.execute(sql, (question_id, answer_id))
         ans = self.cursor.fetchall()
         return ans
+
+    def get_username(self, id):
+        sql = 'SELECT * FROM users WHERE id=%s;'
+        self.cursor.execute(sql, ([id]))
+        user = self.cursor.fetchone()
+        return user[1]
