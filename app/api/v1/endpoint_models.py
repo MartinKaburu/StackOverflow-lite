@@ -90,8 +90,9 @@ class Questions():
     def search(self):
         '''search for a question by content
         '''
+        content = '%'+self.content+'%'
         sql = 'SELECT * FROM questions WHERE content LIKE %s;'
-        self.cursor.execute(sql, ([self.content]))
+        self.cursor.execute(sql, ([content]))
         res = self.cursor.fetchall()
         return res
 
@@ -106,6 +107,12 @@ class Questions():
         self.cursor.execute(sql, ([id]))
         user = self.cursor.fetchone()
         return user[1]
+
+    def edit_question(self, question_id, content):
+        sql = 'UPDATE questions SET content=%s WHERE id=%s;'
+        self.cursor.execute(sql, (content, question_id))
+        
+
 
 
 class Answers():

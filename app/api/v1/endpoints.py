@@ -47,12 +47,12 @@ def get_and_post():
         return abort(400), 400
 
 
-@BP.route('/questions/<int:question_id>', methods=['GET', 'DELETE'])
+@BP.route('/questions/<int:question_id>', methods=['GET', 'DELETE', 'PUT'])
 @jwt_required()
 def get_delete_question(question_id):
     ''' get specific question
     '''
-    question = Questions()
+    question = Questions(int(current_identity))
     if request.method == 'GET':
         question = question.get_one(question_id)
         if question:
@@ -83,6 +83,19 @@ def get_delete_question(question_id):
                 }
             return jsonify(display), 200
         return abort(404), 404
+    elif request.method == 'PUT':
+        if request.json and request.json['content']:
+
+            exists = question.get_one(question_id)
+            if exists:
+                authorized = question.get_by_both(question_id)
+                if authorized:
+                    content = request.json["content"]
+                    question.edit_question(question_id, content)
+                    return jsonify({"message":"Question updated successfully"}), 201
+                return jsonify({"message":"Unauthorized, only question owner can edit question"}), 401
+            return abort(404), 404
+        return abort(400), 400
     que = question.get_one(question_id)
     if que:
         if int(current_identity) is que[0][2]:
@@ -140,7 +153,7 @@ def update_delete_accept(question_id, answer_id):
         answer = Answers(question_id)
         exists = answer.exists(question_id, answer_id)
         if exists:
-            ans = answer.get_by_both(int(current_identity), answer_id)
+            ans = answer.get_by_both(int(current_identity), question_id)
             if ans:
                 answer.delete(answer_id)
                 return jsonify({"message":"Answer deleted successfully"}), 200
@@ -217,8 +230,8 @@ def search():
                     "content":question[1],
                     "owner_id":question[2],
                     "answers":display_ans,
-                    "username": answers.get_username(question[0][2]),
-                    "posted_on": question[0][3].strftime('%B %d, %Y')
+                    "username": answers.get_username(question[2]),
+                    "posted_on": question[3].strftime('%B %d, %Y')
                 }
                 res.append(retformat)
             return jsonify({"RESULTS":res})
