@@ -58,7 +58,7 @@ class Questions():
     def get_all(self):
         '''get all questions
         '''
-        self.cursor.execute('SELECT * FROM questions;')
+        self.cursor.execute('SELECT * FROM questions ORDER BY posted_on DESC;')
         questions = self.cursor.fetchall()
         return questions
 
@@ -111,7 +111,7 @@ class Questions():
     def edit_question(self, question_id, content):
         sql = 'UPDATE questions SET content=%s WHERE id=%s;'
         self.cursor.execute(sql, (content, question_id))
-        
+
 
 
 
@@ -134,7 +134,7 @@ class Answers():
     def get_by_question_id(self):
         '''get answers by a spcific id
         '''
-        sql = 'SELECT * FROM answers WHERE question_id=%s;'
+        sql = 'SELECT * FROM answers WHERE question_id=%s ORDER BY posted_on DESC;'
         self.cursor.execute(sql, [self.question_id])
         answers = self.cursor.fetchall()
         return answers
@@ -143,7 +143,7 @@ class Answers():
     def get_by_answer_id(self, answer_id):
         '''get answers by a spcific answer_id
         '''
-        sql = 'SELECT * FROM answers WHERE id=%s'
+        sql = 'SELECT * FROM answers WHERE id=%s ORDER BY posted_on DESC'
         self.cursor.execute(sql, [answer_id])
         answers = self.cursor.fetchall()
         return answers
@@ -247,7 +247,7 @@ class Answers():
 
 
     def get_by_owner(self, owner):
-        sql = 'SELECT * FROM answers WHERE answer_owner=%s;'
+        sql = 'SELECT * FROM answers WHERE answer_owner=%s ORDER BY posted_on DESC;'
         self.cursor.execute(sql, ([owner]))
         ans = self.cursor.fetchall()
         return ans
