@@ -150,11 +150,11 @@ def update_delete_accept(question_id, answer_id):
             return jsonify({"message":"Ony the question owner can accept answer"}), 401
         return abort(404)
     else:
-        answer = Answers(question_id)
+        answer = Answers()
         exists = answer.exists(question_id, answer_id)
         if exists:
-            ans = answer.get_by_both(int(current_identity), question_id)
-            if ans:
+            authorized = answer.get_by_both(int(current_identity), answer_id)
+            if authorized:
                 answer.delete(answer_id)
                 return jsonify({"message":"Answer deleted successfully"}), 200
             return jsonify({"message":"Only answer owner can delete answer"}), 400

@@ -253,9 +253,9 @@ class Answers():
         return ans
 
 
-    def get_by_both(self, owner, question_id):
-        sql = 'SELECT * FROM answers WHERE answer_owner=%s AND question_id=%s;'
-        self.cursor.execute(sql, (owner, question_id))
+    def get_by_both(self, owner, answer_id):
+        sql = 'SELECT * FROM answers WHERE answer_owner=%s AND id=%s;'
+        self.cursor.execute(sql, (owner, answer_id))
         ans = self.cursor.fetchall()
         return ans
 
@@ -269,7 +269,7 @@ class Answers():
     def exists(self, question_id, answer_id):
         sql = 'SELECT * FROM answers WHERE question_id=%s AND id=%s;'
         self.cursor.execute(sql, (question_id, answer_id))
-        ans = self.cursor.fetchall()
+        ans = self.cursor.fetchone()
         return ans
 
     def get_username(self, id):
