@@ -82,7 +82,7 @@ class Questions():
         CONNECTION.commit()
 
     def get_by_owner(self):
-        sql = 'SELECT * FROM questions WHERE question_owner=%s;'
+        sql = 'SELECT * FROM questions WHERE question_owner=%s ORDER BY posted_on DESC;'
         self.cursor.execute(sql, ([self.question_owner]))
         ans = self.cursor.fetchall()
         return ans

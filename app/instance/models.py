@@ -15,14 +15,14 @@ class DatabaseDriver(object):
         username varchar (32) NOT NULL, \
         email varchar (32) UNIQUE NOT NULL, \
         password VARCHAR (256) NOT NULL,\
-        created_on DATE NOT NULL\
+        created_on TIMESTAMP NOT NULL\
         );'
 
         questions = 'CREATE TABLE IF NOT EXISTS questions(\
         id SERIAL PRIMARY KEY,\
         content TEXT NOT NULL,\
         question_owner INT NOT NULL REFERENCES users(id),\
-        posted_on DATE NOT NULL\
+        posted_on TIMESTAMP NOT NULL\
         );'
 
         answers = 'CREATE TABLE IF NOT EXISTS answers(\
@@ -33,7 +33,7 @@ class DatabaseDriver(object):
         downvotes INT DEFAULT 0, \
         accepted BOOLEAN DEFAULT FALSE, \
         question_id INT NOT NULL REFERENCES questions(id),\
-        posted_on DATE NOT NULL\
+        posted_on TIMESTAMP NOT NULL\
         );'
 
         votes = 'CREATE TABLE IF NOT EXISTS votes(\
