@@ -235,7 +235,7 @@ def search():
                 }
                 res.append(retformat)
             return jsonify({"RESULTS":res})
-        return jsonify({"message":"No matching results"}), 200
+        return jsonify({"message":"No matching results"}), 404
     return jsonify({"message":"Missing parameters"}), 400
 
 
