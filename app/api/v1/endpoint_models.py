@@ -91,7 +91,7 @@ class Questions():
         '''search for a question by content
         '''
         content = '%'+self.content+'%'
-        sql = 'SELECT * FROM questions WHERE content LIKE %s;'
+        sql = 'SELECT * FROM questions WHERE LOWER(content) LIKE %s;'
         self.cursor.execute(sql, ([content]))
         res = self.cursor.fetchall()
         return res
