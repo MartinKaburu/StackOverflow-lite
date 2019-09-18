@@ -41,7 +41,7 @@ pyparsing==2.2.0
 pytest==3.7.1
 pytest-cov==2.5.1
 pytz==2018.5
-requests==2.19.1
+requests==2.20.0
 scandir==1.9.0
 singledispatch==3.4.0.3
 six==1.11.0
